@@ -67,12 +67,10 @@ public class GossipListenerThread extends Thread
 							updateThread.start();
 						}
 						// update your pid from the introducer					
-						else
+						else if(!Node._isIntroducer)
 						{
-							_logger.info("Its my own entry");
-							if(Node._gossipMap.get(Node._machineId).getPid()==99)
+							if(ipAddress.toString().contains(Node._introducerIp) & Node._gossipMap.get(Node._machineId).getPid()==99)
 							{
-								_logger.info("My id is 99 now. changing it to the new id sent by introducer.");
 								Node._gossipMap.get(Node._machineId).setPId(record.getValue().getPid());
 							}						
 						}
