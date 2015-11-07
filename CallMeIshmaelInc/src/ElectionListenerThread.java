@@ -79,6 +79,7 @@ public class ElectionListenerThread extends Thread
 				}
 				else if (message.contains(Node._okMessage))
 				{
+					_logger.info("Received OK message");
 					Node._gossipMap.get(Node._machineId).increaseOkMessageCounts();
 					Node._gossipMap.get(Node._machineId).setIsLeader(false);
 				}
@@ -186,7 +187,7 @@ public class ElectionListenerThread extends Thread
 	public void sendOkMessage(String ip) throws UnknownHostException, IOException
 	{
 		_logger.info("Sending OK message to: "+ip);
-		Socket socket = new Socket(ip, Node._TCPPort);
+		Socket socket = new Socket(ip, Node._TCPPort2);
 		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		out.println(Node._okMessage);
