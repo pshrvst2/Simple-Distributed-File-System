@@ -77,6 +77,11 @@ public class ElectionListenerThread extends Thread
 						okMsgThread.start();*/
 					}
 				}
+				else if (message.contains(Node._okMessage))
+				{
+					Node._gossipMap.get(Node._machineId).increaseOkMessageCounts();
+					Node._gossipMap.get(Node._machineId).setIsLeader(false);
+				}
 				socket.close();
             }              	           
         } 
@@ -98,7 +103,7 @@ public class ElectionListenerThread extends Thread
         }
 	}
 
-	private class MessageHandlerThread extends Thread
+	/*private class MessageHandlerThread extends Thread
 	{
 		private Socket socket;
 		
@@ -148,8 +153,8 @@ public class ElectionListenerThread extends Thread
 							Thread coordinatorThread = new CoordinatorMessageThread(Node._portReceiver,Node._machineId );
 							coordinatorThread.start();
 							sendOkMessage(id);
-							/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
-							okMsgThread.start();*/
+							Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
+							okMsgThread.start();
 						}
 						else
 						{
@@ -157,16 +162,16 @@ public class ElectionListenerThread extends Thread
 							Thread electionThread = new ElectionSenderThread(Node._TCPPort,idList);
 							electionThread.start();
 							sendOkMessage(id);
-							/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
-							okMsgThread.start();*/
+							Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
+							okMsgThread.start();
 							
 						}
 					}
 					// TODO ok message should not be handler herer
-					/*else if(message == Node._okMessage)
+					else if(message == Node._okMessage)
 					{
 						//TODO
-					}*/
+					}
 				}
 			}
 			catch(Exception e)
@@ -176,7 +181,7 @@ public class ElectionListenerThread extends Thread
 			
 		}
 		
-	}
+	}*/
 	
 	public void sendOkMessage(String ip) throws UnknownHostException, IOException
 	{
