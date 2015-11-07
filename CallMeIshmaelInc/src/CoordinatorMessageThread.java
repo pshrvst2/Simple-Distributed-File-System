@@ -54,7 +54,8 @@ public class CoordinatorMessageThread extends Thread
 				socket.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				_logger.info(e);
 			}
 		}
 	}
