@@ -62,7 +62,7 @@ public class ElectionListenerThread extends Thread
 					{
 						sendOkMessage(id);
 						// call coordinate thread 
-						Thread coordinatorThread = new CoordinatorMessageThread(Node._portReceiver,Node._machineId );
+						Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPort,Node._machineId );
 						coordinatorThread.start();
 						/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
 						okMsgThread.start();*/
