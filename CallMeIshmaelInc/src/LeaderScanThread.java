@@ -41,8 +41,12 @@ public class LeaderScanThread extends Thread
 					Node._gossipMap.get(Node._machineId).setOkMessageCounts(0);
 					// start a new election 
 					List<String> candidateIds = Node.getLowerIdList(Node._machineId);
-					Thread electionThread = new ElectionSenderThread(Node._TCPPort,candidateIds);
-					electionThread.start();
+					if(!candidateIds.isEmpty())
+					{
+						_logger.info("Sending Election message");
+						Thread electionThread = new ElectionSenderThread(Node._TCPPort,candidateIds);
+						electionThread.start();
+					}
 				}
 				// An election has been taken place, let see whether we receive any ok messages 
 				else

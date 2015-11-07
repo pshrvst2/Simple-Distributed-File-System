@@ -40,6 +40,7 @@ public class ElectionSenderThread extends Thread
 			{
 				try
 				{
+					_logger.info("Sending election message to machine: "+id);
 					DatagramSocket socket = new DatagramSocket();
 					int length = 0;
 					byte[] buf = null;
