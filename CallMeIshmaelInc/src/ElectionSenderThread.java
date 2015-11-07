@@ -47,7 +47,7 @@ public class ElectionSenderThread extends Thread
 					//_logger.info(Node._machineId + " is connected at port: " + String.valueOf(port));
 					BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-					out.println(Node._electionMessage+"["+id+"]");
+					out.println(Node._electionMessage+"["+Node._machineId+"]");
 					
 					/*String servermsg = "";
 					while ((servermsg = in.readLine()) !=null)
