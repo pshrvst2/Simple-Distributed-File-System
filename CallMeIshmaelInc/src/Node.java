@@ -35,7 +35,7 @@ public class Node
 {
 	// Naming convention, variables which begin with _ are class members.
 	public static Logger _logger = Logger.getLogger(Node.class);
-	public final static int _portSender = 2001;
+	/*public final static int _portSender = 2001;*/
 	public final static int _portReceiver = 2000;
 	public final static int _TCPPort = 3000;
 	public static String _introducerIp = "130.126.28.10";
@@ -53,8 +53,7 @@ public class Node
 	public final static String _coordinatorMessage ="NEW LEADER :";
 	public final static int _timeOutForElection = 3;
 	
-	
-	public static int _threadCount =0;
+
 	
 	//public static List<NodeData> _gossipList = Collections.synchronizedList(new ArrayList<NodeData>());
 	// Thread safe data structure needed to store the details of all the machines in the 
@@ -67,7 +66,7 @@ public class Node
 	public static void main(String[] args)
 	{
 		Thread gossipListener = null;
-		Thread electionListener = null;
+		//Thread electionListener = null;
 		try 
 		{
 			if(initLogging())
@@ -125,12 +124,12 @@ public class Node
 			gossipListener.start();
 			
 			//Now open TCP socket for election
-			electionListener = new ElectionListenerThread(_TCPPort);
+			Thread electionListener = new ElectionListenerThread(_TCPPort);
 			electionListener.start();
 			
 			
 			// logic to send periodically
-			ScheduledExecutorService _schedulerService = Executors.newScheduledThreadPool(3);
+			ScheduledExecutorService _schedulerService = Executors.newScheduledThreadPool(4);
 			_schedulerService.scheduleAtFixedRate(new GossipSenderThread(_portReceiver), 0, 500, unit);
 			
 			// logic to scan the list and perform necessary actions.
@@ -261,7 +260,7 @@ public class Node
 		int ownPid = _gossipMap.get(id).getPid();
 		for (HashMap.Entry<String, NodeData> record : Node._gossipMap.entrySet())
 		{
-			if (record.getValue().getPid()<= ownPid)
+			if (record.getValue().getPid()< ownPid)
 			{
 				idList.add(record.getKey());
 			}

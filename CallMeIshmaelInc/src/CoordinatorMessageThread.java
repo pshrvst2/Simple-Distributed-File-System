@@ -31,13 +31,36 @@ public class CoordinatorMessageThread extends Thread
 			//TODO should reconsider this 
 			// initial design, includes itself and update the isleader only through the listner
 			String ip = record.getKey().substring(0, record.getKey().indexOf(":"));
-			Thread coordinatorThread = new CoordinatorSenderThread(port,ip,coordinatorId);
-			coordinatorThread.start();
+			/*Thread coordinatorThread = new CoordinatorSenderThread(port,ip,coordinatorId);
+			coordinatorThread.start();*/
+
+			Socket socket;
+			try 
+			{
+				socket = new Socket(ip, port);
+
+				BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+				out.println(Node._coordinatorMessage+"["+coordinatorId+"]");
+
+				String servermsg ="";
+				while((servermsg = in.readLine()) !=null)
+				{
+					_logger.info("Coordniator message has been send out and the server side returns : "+ servermsg);
+				}
+
+				out.close();
+				in.close();
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	
-	public class CoordinatorSenderThread extends Thread
+	/*public class CoordinatorSenderThread extends Thread
 	{
 		private int port;
 		private String serverhost;
@@ -74,6 +97,6 @@ public class CoordinatorMessageThread extends Thread
 				//e.printStackTrace();
 			}
 		}
-	}
+	}*/
 
 }

@@ -1,9 +1,15 @@
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -15,7 +21,7 @@ import org.apache.log4j.Logger;
 
 public class ElectionSenderThread extends Thread
 {
-	public static Logger _logger = Logger.getLogger(ElectionListenerThread.class);
+	public static Logger _logger = Logger.getLogger(ElectionSenderThread.class);
 	private int port;
 	private List<String> idList = new ArrayList<String>();
 
@@ -29,20 +35,51 @@ public class ElectionSenderThread extends Thread
 	{
 		_logger.info("ElectionSenderThread initialzing....");
 		if (!idList.isEmpty())
-		{			
+		{				
 			for(String id : idList)
 			{
-				Thread electionMThread = new ElectionMessageThread(port, id);
-				electionMThread.start();
+				try
+				{
+					DatagramSocket socket = new DatagramSocket();
+					int length = 0;
+					byte[] buf = null;
+					String serverhost = id.substring(0, id.indexOf(":")).trim();	
+					
+					ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				    ObjectOutputStream objOpStream = new ObjectOutputStream(byteArrayOutputStream);
+				    //objOpStream.writeObject(_gossipList);
+				    objOpStream.writeObject(Node._electionMessage+"["+Node._machineId+"]");
+				    buf = byteArrayOutputStream.toByteArray();
+				    length = buf.length;
+				    
+				    DatagramPacket dataPacket = new DatagramPacket(buf, length);
+					dataPacket.setAddress(InetAddress.getByName(serverhost));
+					dataPacket.setPort(port);
+					int retry = 1;
+					//try three times as UDP is unreliable. At least one message will reach :)
+					while(retry > 0)
+					{
+						socket.send(dataPacket);
+						--retry;
+					}
+					socket.close();
+				}
+				catch (SocketException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch(IOException ioExcep)
+				{
+					_logger.error(ioExcep);
+					ioExcep.printStackTrace();
+				}
 			}
 			Node._gossipMap.get(Node._machineId).increaseElectionCounts();
-			// schedule a timmer check poin to check the ok message 
-			ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-			scheduler.schedule(new CheckOkMessageThread(), Node._timeOutForElection, TimeUnit.SECONDS);
 		}	
 	}
 	
-	public class ElectionMessageThread extends Thread 
+	/*public class ElectionMessageThread extends Thread 
 	{
 		private int port;
 		private String serverhost; 
@@ -72,6 +109,7 @@ public class ElectionSenderThread extends Thread
 					if(servermsg.contains(Node._okMessage))
 					{
 						Node._gossipMap.get(Node._machineId).increaseOkMessageCounts();
+						break;
 					}
 				}
 				
@@ -85,30 +123,6 @@ public class ElectionSenderThread extends Thread
 				//e.printStackTrace();
 			}
 		}
-	}
-	
-	public class CheckOkMessageThread extends Thread 
-	{
-		String id;
-		public CheckOkMessageThread()
-		{
-			this.id = Node._machineId;
-		}
-		public void run()
-		{
-			// only take action when no ok messages received which implies your r the leader
-			int eleCount = Node._gossipMap.get(id).getElectionCounts();
-			int okCount = Node._gossipMap.get(id).getOkMessageCounts();
-			if(Node._gossipMap.get(id).getElectionCounts()>0 & Node._gossipMap.get(id).getOkMessageCounts()==0)
-			{
-				Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPort,id);
-				coordinatorThread.start();
-			}
-			// reset the ele counts and ok message counts back to 0
-			Node._gossipMap.get(id).setElectionCounts(0);
-			Node._gossipMap.get(id).setOkMessageCounts(0);
-		}
-		
-	}
-	
+	}*/
+
 }
