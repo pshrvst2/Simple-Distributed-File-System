@@ -262,6 +262,7 @@ public class Node
 		{
 			if (record.getValue().getPid()< ownPid)
 			{
+				_logger.info("Found a lower Id. "+record.getKey());
 				idList.add(record.getKey());
 			}
 		}

@@ -185,6 +185,7 @@ public class ElectionListenerThread extends Thread
 	
 	public void sendOkMessage(String ip) throws UnknownHostException, IOException
 	{
+		_logger.info("Sending OK message to: "+ip);
 		Socket socket = new Socket(ip, Node._TCPPort);
 		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
