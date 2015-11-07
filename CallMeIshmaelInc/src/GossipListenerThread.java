@@ -66,6 +66,14 @@ public class GossipListenerThread extends Thread
 							Thread updateThread = new MemberUpdateThread(machineId, record.getValue());
 							updateThread.start();
 						}
+						// update your pid from the introducer					
+						else if(!Node._isIntroducer)
+						{
+							if(Node._introducerIp.equalsIgnoreCase(ipAddress.toString()) & Node._gossipMap.get(Node._machineId).getPid()==99)
+							{
+								Node._gossipMap.get(Node._machineId).setPId(record.getValue().getPid());
+							}						
+						}
 					}
 
 				}
@@ -110,8 +118,23 @@ public class GossipListenerThread extends Thread
 				if(!Node._gossipMap.containsKey(id))
 				{
 					_logger.info("Added a new machine: "+id);
+					
+					// Assign a new pid for the new member
+					if(Node._isIntroducer)
+					{
+						int temp = 0;
+						for (HashMap.Entry<String, NodeData> record : Node._gossipMap.entrySet())
+						{
+							if(record.getValue().getPid()>temp)
+							{
+								temp = record.getValue().getPid();
+							}
+						}
+						nodeData.setPId(temp+1);
+					}
 					Node._gossipMap.put(id, nodeData);
 					Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
+					
 				}
 				// heartbeat of the process is more than the local copy's heartbeart. That means the process has
 				// communicated to other processes in the group that it's alive! Don't kill me plssss!!

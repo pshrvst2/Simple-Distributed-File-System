@@ -53,7 +53,7 @@ public class Node
 	public final static String _okMessage ="ok";
 	public final static String _coordinatorMessage ="NEW LEADER :";
 	public final static int _timeOutForElection = 3;
-	
+	public static boolean _isIntroducer = false;
 
 	
 	//public static List<NodeData> _gossipList = Collections.synchronizedList(new ArrayList<NodeData>());
@@ -310,8 +310,9 @@ public class Node
 			}
 			else
 			{
-				// If the introducer up first time or rejoin, give the highest priority 
+				// If the introducer up first time or rejoin, give the highest priority 				
 				data.setPId(1);
+				_isIntroducer = true;
 			}
 
 		}
