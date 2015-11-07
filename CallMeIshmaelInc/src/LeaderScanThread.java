@@ -44,7 +44,7 @@ public class LeaderScanThread extends Thread
 					if(!candidateIds.isEmpty())
 					{
 						_logger.info("Sending Election message");
-						Thread electionThread = new ElectionSenderThread(Node._TCPPort,candidateIds);
+						Thread electionThread = new ElectionSenderThread(candidateIds);
 						electionThread.start();
 					}
 				}

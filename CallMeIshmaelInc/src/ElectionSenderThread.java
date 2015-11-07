@@ -17,17 +17,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA._PolicyStub;
 
 
 public class ElectionSenderThread extends Thread
 {
 	public static Logger _logger = Logger.getLogger(ElectionSenderThread.class);
-	private int port;
+	//private int port;
 	private List<String> idList = new ArrayList<String>();
 
-	public ElectionSenderThread(int port, List<String> list) 
+	public ElectionSenderThread(List<String> list) 
 	{
-		this.port = port;
+		//this.port = port;
 		this.idList = list;
 	}
 
@@ -55,7 +56,8 @@ public class ElectionSenderThread extends Thread
 				    
 				    DatagramPacket dataPacket = new DatagramPacket(buf, length);
 					dataPacket.setAddress(InetAddress.getByName(serverhost));
-					dataPacket.setPort(port);
+					//dataPacket.setPort(port);
+					dataPacket.setPort(Node._portReceiver);
 					int retry = 1;
 					//try three times as UDP is unreliable. At least one message will reach :)
 					while(retry > 0)

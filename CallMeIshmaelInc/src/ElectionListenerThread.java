@@ -70,7 +70,7 @@ public class ElectionListenerThread extends Thread
 					else
 					{
 						// call election thread
-						Thread electionThread = new ElectionSenderThread(Node._TCPPort,idList);
+						Thread electionThread = new ElectionSenderThread(idList);
 						electionThread.start();
 						sendOkMessage(id);
 						/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
