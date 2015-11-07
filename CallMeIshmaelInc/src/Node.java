@@ -35,7 +35,7 @@ public class Node
 {
 	// Naming convention, variables which begin with _ are class members.
 	public static Logger _logger = Logger.getLogger(Node.class);
-	/*public final static int _portSender = 2001;*/
+	public final static int _portSender = 2001;
 	public final static int _portReceiver = 2000;
 	public final static int _TCPPort = 3000;
 	public static String _introducerIp = "130.126.28.10";

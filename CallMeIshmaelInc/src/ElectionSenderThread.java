@@ -23,12 +23,12 @@ import org.omg.CORBA._PolicyStub;
 public class ElectionSenderThread extends Thread
 {
 	public static Logger _logger = Logger.getLogger(ElectionSenderThread.class);
-	//private int port;
+	private int port;
 	private List<String> idList = new ArrayList<String>();
 
-	public ElectionSenderThread(List<String> list) 
+	public ElectionSenderThread(List<String> list, int port) 
 	{
-		//this.port = port;
+		this.port = port;
 		this.idList = list;
 	}
 
@@ -42,7 +42,30 @@ public class ElectionSenderThread extends Thread
 				try
 				{
 					_logger.info("Sending election message to machine: "+id);
-					DatagramSocket socket = new DatagramSocket();
+					String serverhost = id.substring(0, id.indexOf(":")).trim();
+					Socket socket = new Socket(serverhost, port);
+					//_logger.info(Node._machineId + " is connected at port: " + String.valueOf(port));
+					BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+					out.println(Node._electionMessage+"["+id+"]");
+					
+					/*String servermsg = "";
+					while ((servermsg = in.readLine()) !=null)
+					{
+						// check ok message 
+						if(servermsg.contains(Node._okMessage))
+						{
+							Node._gossipMap.get(Node._machineId).increaseOkMessageCounts();
+							break;
+						}
+					}*/
+					
+					out.close();
+					in.close();
+					socket.close();
+					
+					
+					/*DatagramSocket socket = new DatagramSocket();
 					int length = 0;
 					byte[] buf = null;
 					String serverhost = id.substring(0, id.indexOf(":")).trim();	
@@ -57,7 +80,7 @@ public class ElectionSenderThread extends Thread
 				    DatagramPacket dataPacket = new DatagramPacket(buf, length);
 					dataPacket.setAddress(InetAddress.getByName(serverhost));
 					//dataPacket.setPort(port);
-					dataPacket.setPort(Node._portReceiver);
+					dataPacket.setPort(Node._portSender);
 					int retry = 1;
 					//try three times as UDP is unreliable. At least one message will reach :)
 					while(retry > 0)
@@ -65,7 +88,7 @@ public class ElectionSenderThread extends Thread
 						socket.send(dataPacket);
 						--retry;
 					}
-					socket.close();
+					socket.close();*/
 				}
 				catch (SocketException e) 
 				{
