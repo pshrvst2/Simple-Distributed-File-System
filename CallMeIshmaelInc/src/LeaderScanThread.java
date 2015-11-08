@@ -80,21 +80,43 @@ public class LeaderScanThread extends Thread
 				 *********************************************************************/		
 				if(Node._machineId == Node.getLeadId())
 				{
-					String fileName = "File # "+ Node._fileNameInt;
-					List<String> addressList = new ArrayList<String>();
-					Set<String> ips = FileListSenderThread.getTwoSuccessorIps(Node.getLeadId());
-					if (ips.size() == 2)
+					
+					
+					if(Node._fileMap.isEmpty())
 					{
-						addressList.add(Node._machineIp);
-						for( String addr : ips)
-						{
-							addressList.add(addr);
-						}
-						Node._fileMap.put(fileName, addressList);
+						String messageCounts = "msg#";
+						List<String> firstList = new ArrayList<String>();
+						firstList.add("0");
+						firstList.add("0");
+						firstList.add("0");
+						Node._fileMap.put(messageCounts, firstList);
 					}
-					Node._fileNameInt += 1;
-					Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
-					fileListThread.start();
+					else
+					{
+						Set<String> ips = FileListSenderThread.getTwoSuccessorIps(Node.getLeadId());
+						if (ips.size() == 2)
+						{
+							// create the file list here 
+							String counts = String.valueOf(++Node._fileMsgCounter);
+							Node._fileMap.get("msg#").set(0, counts);
+							String fileName = "File # "+ Node._fileNameInt;
+							List<String> addressList = new ArrayList<String>();
+							// just because we have three mechine, so we need put itself self here 
+							addressList.add(Node._machineIp);
+							for( String addr : ips)
+							{
+								addressList.add(addr);
+							}
+							Node._fileMap.put(fileName, addressList);							
+							Node._fileNameInt += 1;
+							
+							// pass the file list to others 
+							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+							fileListThread.start();
+						}
+						
+						
+					}		
 				}
 				
 			}

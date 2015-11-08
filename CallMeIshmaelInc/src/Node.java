@@ -169,6 +169,7 @@ public class Node
 				System.out.println("Type 'put <filename>' to replicate the file on SDFS");
 				System.out.println("Type 'get <filename>' to to get SDFS file to local file system");
 				System.out.println("Type 'delete <filename>' to delete file from SDFS");
+				System.out.println("Type 'store' to show the file list");
 				
 				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 				String userCmd = reader.readLine();
@@ -235,6 +236,44 @@ public class Node
 				else if(userCmd.startsWith("delete"))
 				{
 					
+				}
+				else if(userCmd.startsWith("store"))
+				{
+					String delim = "\t||\t";
+					System.out.println("*********File Name********"+delim+"**Address 1**"+delim+"Address 2"+delim+"Address 3");
+					_logger.info("User want to list the files");
+					_logger.info("*********File Name********"+delim+"**Address 1**"+delim+"Address 2"+delim+"Address 3");
+					for (HashMap.Entry<String, List<String>> record : _fileMap.entrySet())
+					{
+						List<String> temp = record.getValue();
+						if(temp.size()==3)
+						{
+							System.out.println(record.getKey()
+									+delim+temp.get(0)+"\t"
+									+delim+temp.get(1)+"\t"
+									+delim+temp.get(2)+"\t");
+							_logger.info(record.getKey()
+									+delim+temp.get(0)+"\t"
+									+delim+temp.get(1)+"\t"
+									+delim+temp.get(2)+"\t");
+						}
+						else if(temp.size()==2)
+						{
+							System.out.println(record.getKey()
+									+delim+temp.get(0)+"\t"
+									+delim+temp.get(1)+"\t");
+							_logger.info(record.getKey()
+									+delim+temp.get(0)+"\t"
+									+delim+temp.get(1)+"\t");
+						}
+						else if(temp.size()==1)
+						{
+							System.out.println(record.getKey()
+									+delim+temp.get(0)+"\t");
+							_logger.info(record.getKey()
+									+delim+temp.get(0)+"\t");
+						}				
+					}
 				}
 				else if(userCmd.equalsIgnoreCase("quit"))
 				{
