@@ -39,7 +39,7 @@ public class Node
 	public final static int _gossipMemberListPort = 2000;
 	public final static int _TCPPort = 3000;
 	//public final static int _TCPPort2 = 3001;
-	public static String _introducerIp = "192.17.11.153";
+	public static String _introducerIp = "192.17.11.8";
 	public static boolean _gossipListenerThreadStop = false;
 	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
