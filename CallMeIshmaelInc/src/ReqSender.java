@@ -23,7 +23,7 @@ public class ReqSender extends Thread
 	private static Logger log = Logger.getLogger(ReqSender.class);
 	private final String userCommand;
 	private final String fileName;
-	private final String leaderIp;
+	private final String serverIp;
 	private final int serverPort;
 	//private final String localFilePath = "/home/pshrvst2/local/";
 	//private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
@@ -35,7 +35,7 @@ public class ReqSender extends Thread
 	{
 		this.userCommand = cmd;
 		this.fileName = file;
-		this.leaderIp = serverip;
+		this.serverIp = serverip;
 		this.serverPort = p;
 	}
 
@@ -55,7 +55,7 @@ public class ReqSender extends Thread
 			try 
 			{
 				// logic to ping the master and get the list of ip's
-				socket = new Socket(leaderIp, serverPort);
+				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -75,7 +75,7 @@ public class ReqSender extends Thread
 						noResult = true;
 						break;
 					}
-					Thread fileOprReqInstance = new ReqSender("begin:"+userCommand+":"+fileName, fileName, returnStr, serverPort);
+					Thread fileOprReqInstance = new ReqSender("begin:"+userCommand, fileName, returnStr, serverPort);
 					fileOprReqInstance.start();
 					fileUpdateThreadList.add(fileOprReqInstance);
 					listOfIp.add(returnStr);
@@ -101,7 +101,7 @@ public class ReqSender extends Thread
 				
 				if(!noResult)
 				{
-					Thread fileOprReqInstance = new ReqSender("end:"+userCommand+":"+fileName+"-"+sb.toString(), fileName, leaderIp, serverPort);
+					Thread fileOprReqInstance = new ReqSender("end:"+userCommand+":"+fileName+"-"+sb.toString(), fileName, serverIp, serverPort);
 					fileOprReqInstance.start();
 
 					while(fileOprReqInstance.isAlive())
@@ -176,7 +176,7 @@ public class ReqSender extends Thread
 			try 
 			{
 				// logic to ping the master and get one ip from which you can get the file.
-				socket = new Socket(leaderIp, serverPort);
+				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -195,7 +195,7 @@ public class ReqSender extends Thread
 					File file = new File(fullFilePath);
 					file.createNewFile();
 					PrintWriter resultWriter = new PrintWriter(file);
-					if(!remoteIp.equalsIgnoreCase(leaderIp))
+					if(!remoteIp.equalsIgnoreCase(serverIp))
 					{
 						Socket fileTransferSocket = new Socket(remoteIp, serverPort);
 						PrintWriter filePw = new PrintWriter(fileTransferSocket.getOutputStream(), true);
@@ -250,7 +250,7 @@ public class ReqSender extends Thread
 			try 
 			{
 				// logic to ping the master and get the list of ip's
-				socket = new Socket(leaderIp, serverPort);
+				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -270,7 +270,7 @@ public class ReqSender extends Thread
 				{	
 					for(String ip : listOfIp)
 					{
-						if(!ip.equalsIgnoreCase(leaderIp))
+						if(!ip.equalsIgnoreCase(serverIp))
 						{
 							Socket fileDeleteSocket = new Socket(ip, serverPort);
 							PrintWriter filePw = new PrintWriter(fileDeleteSocket.getOutputStream(), true);
@@ -325,6 +325,43 @@ public class ReqSender extends Thread
 				e.printStackTrace();
 			}
 			
+		}
+		else if(userCommand.equalsIgnoreCase("begin:put"))
+		{
+			// put file
+			String fullFilePath = Node.localFilePath+fileName;
+			String line = null;
+			try 
+			{
+				// logic to ping the master and get the list of ip's
+				socket = new Socket(serverIp, serverPort);
+				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw = new PrintWriter(socket.getOutputStream(), true);
+				pw.println(userCommand+":"+fileName);
+				log.info("Message flushed to leader");
+				
+				FileReader fileReader = new FileReader(fullFilePath);
+				pw.println("begin:"+userCommand+":"+fileName);
+				BufferedReader bufReader = new BufferedReader(fileReader);
+
+				while((line = bufReader.readLine()) != null)
+				{
+					pw.println(line);
+					//System.out.println(line); 
+				}
+				fileReader.close();
+				bufReader.close();				
+				pw.close();
+				serverReader.close();
+				socket.close();
+
+			}
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				log.error(e);
+				e.printStackTrace();
+			}
 		}
 		
 	}
