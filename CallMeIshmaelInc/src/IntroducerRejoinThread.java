@@ -67,7 +67,7 @@ public class IntroducerRejoinThread extends Thread
 
 			DatagramPacket dataPacket = new DatagramPacket(buf, length);
 			dataPacket.setAddress(InetAddress.getByName(Node._introducerIp));
-			dataPacket.setPort(Node._portReceiver);
+			dataPacket.setPort(Node._gossipMemberListPort);
 
 			socket.send(dataPacket);
 

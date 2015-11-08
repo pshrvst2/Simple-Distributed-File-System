@@ -35,8 +35,8 @@ public class Node
 {
 	// Naming convention, variables which begin with _ are class members.
 	public static Logger _logger = Logger.getLogger(Node.class);
-	public final static int _portFileListener = 2001;
-	public final static int _portReceiver = 2000;
+	public final static int _gossipFileListPort = 2001;
+	public final static int _gossipMemberListPort = 2000;
 	public final static int _TCPPort = 3000;
 	//public final static int _TCPPort2 = 3001;
 	public static String _introducerIp = "192.17.11.153";
@@ -125,11 +125,11 @@ public class Node
 			//check for introducer
 			checkIntroducer(_machineIp, node);
 			
-			Thread fileListener = new FileListListenerThread(_portFileListener);
+			Thread fileListener = new FileListListenerThread(_gossipFileListPort);
 			fileListener.start();
 			
 			//Now open your socket and listen to other peers.
-			gossipListener = new GossipListenerThread(_portReceiver);
+			gossipListener = new GossipListenerThread(_gossipMemberListPort);
 			gossipListener.start();
 			
 			//Now open TCP socket for election
@@ -139,7 +139,7 @@ public class Node
 			
 			// logic to send periodically
 			ScheduledExecutorService _schedulerService = Executors.newScheduledThreadPool(4);
-			_schedulerService.scheduleAtFixedRate(new GossipSenderThread(_portReceiver), 0, 500, unit);
+			_schedulerService.scheduleAtFixedRate(new GossipSenderThread(_gossipMemberListPort), 0, 500, unit);
 			
 			// logic to scan the list and perform necessary actions.
 			_schedulerService.scheduleAtFixedRate(new ListScanThread(), 0, 100, unit);
@@ -352,7 +352,7 @@ public class Node
 			    
 			    DatagramPacket dataPacket = new DatagramPacket(buf, length);
 				dataPacket.setAddress(InetAddress.getByName(_introducerIp));
-				dataPacket.setPort(_portReceiver);
+				dataPacket.setPort(_gossipMemberListPort);
 				int retry = 3;
 				//try three times as UDP is unreliable. At least one message will reach :)
 				while(retry > 0)

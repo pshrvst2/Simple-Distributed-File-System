@@ -87,9 +87,9 @@ public class FileListListenerThread extends Thread{
 					{
 						_logger.info("FileListListenerThread: the file list got updated with counts:" + Node._fileMsgCounter);
 						Node._fileMap = map;
-						
-						
-						// TODO call the filelist sender thread to pass the list to two random member
+						// this will only happen when the machine is not the leader, the leader only update its filelist after the file operation is done.
+						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,false);
+						fileListThread.run();
 					}
 
 				}

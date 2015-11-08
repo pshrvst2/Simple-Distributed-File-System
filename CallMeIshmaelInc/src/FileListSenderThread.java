@@ -1,6 +1,8 @@
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,23 +40,42 @@ public class FileListSenderThread extends Thread
 			
 			Set<String> ip2bSent = new HashSet<String>();
 			
+			// check if the machine is the leader, if it's the leader send to two of his successor
 			if(isLeader)
 			{
 				ip2bSent = getTwoSuccessorIps(Node.getLeadId());
 			}
+			// if not, send to any random 2 server beside itself and the leader
 			else
 			{
 				ip2bSent = get2IpAddresses(Node._machineId,Node.getLeadId());
 			}
-			
-			//TODO handle to the pass data through the udp 
-			
-		
-			
-			
-			
-			
-			
+
+			HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+			for(HashMap.Entry<String, List<String>> record: Node._fileMap.entrySet())
+			{
+				map.put(record.getKey(), record.getValue());
+				_logger.info("file info: file name " + record.getKey()
+						+ "|| addr1: " + record.getValue().get(0)
+						+ "|| addr2: " + record.getValue().get(1)
+						+ "|| addr3: " + record.getValue().get(2));
+			}
+			if (!ip2bSent.isEmpty()) 
+			{
+				objOpStream.writeObject(map);
+				buf = byteArrayOutputStream.toByteArray();
+				length = buf.length;
+
+				for (String ip : ip2bSent) 
+				{
+					DatagramPacket dataPacket = new DatagramPacket(buf, length);
+					dataPacket.setAddress(InetAddress.getByName(ip));
+					dataPacket.setPort(port);
+					senderSocket.send(dataPacket);
+					_logger.info("Sent file list form machine ip : " + Node._machineIp
+							+ " to machine ip : " + ip);
+				}
+			}
 		}
 		catch (SocketException e1) 
 		{
