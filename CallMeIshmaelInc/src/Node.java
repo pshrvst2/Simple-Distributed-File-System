@@ -41,6 +41,7 @@ public class Node
 	//public final static int _TCPPort2 = 3001;
 	public static String _introducerIp = "192.17.11.153";
 	public static boolean _gossipListenerThreadStop = false;
+	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
 	public static String _machineIp = "";
 	public static String _machineId= "";
@@ -124,12 +125,8 @@ public class Node
 			//check for introducer
 			checkIntroducer(_machineIp, node);
 			
-			// if you are not introducer, open your sockets to listen file file
-			if(!_isIntroducer)
-			{
-				Thread fileListener = new FileListListenerThread(_portFileListener);
-				fileListener.start();
-			}
+			Thread fileListener = new FileListListenerThread(_portFileListener);
+			fileListener.start();
 			
 			//Now open your socket and listen to other peers.
 			gossipListener = new GossipListenerThread(_portReceiver);
@@ -209,11 +206,23 @@ public class Node
 					}
 					else
 					{
-						String filename = command[1];
 						// Logic - check for file at local, if exists then contact master.
 						// if replicas of file already exists, then master would deny further replicas
 						// else, master returns three ip addresses to which file will be replicated.
 						// once file is replicated in all the three vm's, master edits the file list and gossips it all.
+						
+						//check for the file at local
+						boolean isFilePresentAtLocal = false;
+						
+						if(isFilePresentAtLocal)
+						{
+							Thread reqInstance = new ReqSender(command[0], command[1]);
+							reqInstance.start();
+						}
+						else
+						{
+							System.out.println("File not found");
+						}
 					}
 				}
 				else if(userCmd.startsWith("get"))
@@ -231,6 +240,7 @@ public class Node
 					System.out.println("Terminating");
 					_logger.info("Terminating");
 					_gossipListenerThreadStop = true;
+					_fileListListenerThreadStop = true;
 					_electionListenerThreadStop = true;
 					Node._gossipMap.get(_machineId).setIsLeader(false);
 					Node._gossipMap.get(_machineId).setActive(false);
