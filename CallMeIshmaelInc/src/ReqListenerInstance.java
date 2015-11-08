@@ -149,6 +149,7 @@ public class ReqListenerInstance extends Thread
 					{	
 						File file = new File(Node.sdfsFilePath+words[1]);
 						file.createNewFile();
+						PrintWriter pw2 = new PrintWriter(clientSocket.getOutputStream(),true);
 						PrintWriter fileWriter = new PrintWriter(file);
 						while((line = reader.readLine()) != null)
 						{
