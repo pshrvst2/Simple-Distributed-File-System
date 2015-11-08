@@ -104,7 +104,7 @@ public class ReqSender extends Thread
 							bufReader.close();
 						}
 					}
-					// send the final ack to leader that operation is done
+					// send the final ack to leader that operation is done, looks to be buggy
 					pw.println("end:"+userCommand+":"+fileName);
 				}
 				else
