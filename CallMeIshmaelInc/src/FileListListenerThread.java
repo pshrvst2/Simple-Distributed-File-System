@@ -1,4 +1,5 @@
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
@@ -98,11 +99,15 @@ public class FileListListenerThread extends Thread{
 					bais.close();
 
 				}
+				catch (EOFException e2 )
+				{
+					_logger.error(" The Filelist is full!!!");
+				}
 				catch (IOException e) 
 				{
 					_logger.error(e);
 					e.printStackTrace();
-				}
+				}		
 				catch (ClassNotFoundException e) 
 				{
 					_logger.error(e);

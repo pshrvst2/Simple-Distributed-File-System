@@ -1,4 +1,5 @@
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -87,6 +88,7 @@ public class FileListSenderThread extends Thread
 			_logger.error(e);
 			e.printStackTrace();
 		}
+		
 	}
 	
 	
