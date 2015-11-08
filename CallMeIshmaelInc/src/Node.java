@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -69,6 +70,11 @@ public class Node
 	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
 	public static HashMap<String, List<String>> _fileMap = new HashMap<String, List<String>>();
 
+	private final static String localFilePath = "/home/pshrvst2/local/";
+	private final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	
+	//private final String localFilePath = "/home/xchen135/local/";
+	//private final String sdfsFilePath = "/home/xchen135/sdfs/";
 	/**
 	 * @param args To ensure : Server init has to be command line.
 	 */
@@ -220,9 +226,8 @@ public class Node
 						// once file is replicated in all the three vm's, master edits the file list and gossips it all.
 						
 						//check for the file at local
-						boolean isFilePresentAtLocal = false;
-						
-						if(isFilePresentAtLocal)
+						File file = new File(localFilePath);
+						if(file.exists())
 						{
 							String serverip = null;
 							serverip = getLeadIp();
