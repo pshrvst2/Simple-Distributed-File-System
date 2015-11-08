@@ -102,18 +102,34 @@ public class ReqListenerInstance extends Thread
 				}
 
 			}
-			/*else if(clientCommand.startsWith("end"))
+			else if(clientCommand.startsWith("end"))
 			{
 				// its an ACK from the client. Now update your member list.
-				if(words[1].equalsIgnoreCase("put"))
-				{
+				
+				// The entire command will be in the form of 
+				// end:put:foo-ip1:ip2:ip3:
 
-				}
-				else if(words[1].equalsIgnoreCase("get"))
+				String entireCommand = clientCommand;
+				String basicPart[] = entireCommand.split("-");
+				String commandPart[] = basicPart[0].split(":");
+				String temp = basicPart[1].substring(0, basicPart[1].length()-1);
+				String ipPart[] = temp.split(":");
+				
+				Set<String> ipSet = new HashSet<String>();;
+				for(String ip : ipPart)
 				{
-
+					ipSet.add(ip);
 				}
-			}*/
+				
+				if(commandPart[1].equalsIgnoreCase("put"))
+				{
+					updateFileList(ipSet, commandPart[2], "put");
+				}
+				else if(commandPart[1].equalsIgnoreCase("delete"))
+				{
+					
+				}
+			}
 			else
 			{
 				Set<String> ipSet = null;
@@ -141,11 +157,10 @@ public class ReqListenerInstance extends Thread
 
 								pw.println(ip);
 							}
-							pw.close();
 						}
 					}
 
-					if(leaderAsReplica)
+					/*if(leaderAsReplica)
 					{	
 						File file = new File(Node.sdfsFilePath+words[1]);
 						file.createNewFile();
@@ -182,7 +197,7 @@ public class ReqListenerInstance extends Thread
 								break;
 							}
 						}
-					}
+					}*/
 				}
 				else if(words[0].equalsIgnoreCase("get"))
 				{
@@ -270,7 +285,7 @@ public class ReqListenerInstance extends Thread
 				}
 			}
 
-			//pw.close();
+			pw.close();
 			reader.close();
 			writer.close();
 			clientSocket.close();

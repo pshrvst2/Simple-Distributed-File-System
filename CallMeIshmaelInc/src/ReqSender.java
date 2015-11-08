@@ -63,15 +63,53 @@ public class ReqSender extends Thread
 				String returnStr = null;
 				long threadId = Thread.currentThread().getId();
 				List<String> listOfIp = new ArrayList<String>();
+				List<Thread> fileUpdateThreadList = new ArrayList<Thread>();
+				boolean noResult = false;
+				StringBuffer sb = new StringBuffer();
 				while ((returnStr = serverReader.readLine()) != null) 
 				{
 					log.info(" Thread Id " + threadId + " : " + returnStr);
 					if(returnStr.equalsIgnoreCase("NA"))
+					{
+						System.out.println("We already have replica's");
+						noResult = true;
 						break;
+					}
+					Thread fileOprReqInstance = new ReqSender("begin:"+userCommand+":"+fileName, fileName, returnStr, serverPort);
+					fileOprReqInstance.start();
+					fileUpdateThreadList.add(fileOprReqInstance);
 					listOfIp.add(returnStr);
+					sb.append(returnStr).append(":");
 				}
 				
-				if(!listOfIp.isEmpty())
+				while (!fileUpdateThreadList.isEmpty()) 
+				{
+					for (int i = 0; i < fileUpdateThreadList.size(); i++) 
+					{
+						State state = fileUpdateThreadList.get(i).getState();
+						if (state == Thread.State.TERMINATED
+								|| state == Thread.State.BLOCKED) 
+						{
+							fileUpdateThreadList.remove(fileUpdateThreadList.get(i));
+						}
+					}
+				}
+				
+				pw.close();
+				serverReader.close();
+				socket.close();
+				
+				if(!noResult)
+				{
+					Thread fileOprReqInstance = new ReqSender("end:"+userCommand+":"+fileName+"-"+sb.toString(), fileName, leaderIp, serverPort);
+					fileOprReqInstance.start();
+
+					while(fileOprReqInstance.isAlive())
+					{
+						// do nothing and wait for it to end
+					}
+				}
+				/*if(!listOfIp.isEmpty())
 				{
 					for(String ip : listOfIp)
 					{
@@ -118,7 +156,7 @@ public class ReqSender extends Thread
 				
 				pw.close();
 				serverReader.close();
-				socket.close();
+				socket.close();*/
 				
 			}
 			catch (IOException e) 
