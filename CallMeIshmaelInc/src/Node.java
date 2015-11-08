@@ -35,7 +35,7 @@ public class Node
 {
 	// Naming convention, variables which begin with _ are class members.
 	public static Logger _logger = Logger.getLogger(Node.class);
-	public final static int _portSender = 2001;
+	public final static int _portFileListener = 2001;
 	public final static int _portReceiver = 2000;
 	public final static int _TCPPort = 3000;
 	//public final static int _TCPPort2 = 3001;
@@ -54,12 +54,16 @@ public class Node
 	public final static String _coordinatorMessage ="NEW LEADER :";
 	public final static int _timeOutForElection = 3;
 	public static boolean _isIntroducer = false;
+	public static int _fileMsgCounter = 0;
 
 	
 	//public static List<NodeData> _gossipList = Collections.synchronizedList(new ArrayList<NodeData>());
 	// Thread safe data structure needed to store the details of all the machines in the 
 	// Gossip group. Concurrent hashmap is our best option as it can store string, nodeData. 
 	public static ConcurrentHashMap<String, NodeData> _gossipMap = new ConcurrentHashMap<String, NodeData>();
+	
+	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
+	public static ConcurrentHashMap<String, String[]> _fileMap = new ConcurrentHashMap<String, String[]>();
 
 	/**
 	 * @param args To ensure : Server init has to be command line.
@@ -120,6 +124,13 @@ public class Node
 			//check for introducer
 			checkIntroducer(_machineIp, node);
 			
+			// if you are not introducer, open your sockets to listen file file
+			if(!_isIntroducer)
+			{
+				Thread fileListener = new FileListListenerThread(_portFileListener);
+				fileListener.start();
+			}
+			
 			//Now open your socket and listen to other peers.
 			gossipListener = new GossipListenerThread(_portReceiver);
 			gossipListener.start();
@@ -154,6 +165,12 @@ public class Node
 				System.out.println("Type 'list' to view the current membership list.");
 				System.out.println("Type 'quit' to quit the group and close servers");
 				System.out.println("Type 'info' to know your machine details");
+				
+				//new user options for MP3
+				System.out.println("Type 'put <filename>' to replicate the file on SDFS");
+				System.out.println("Type 'get <filename>' to to get SDFS file to local file system");
+				System.out.println("Type 'delete <filename>' to delete file from SDFS");
+				
 				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 				String userCmd = reader.readLine();
 				if(userCmd.equalsIgnoreCase("list"))
@@ -181,6 +198,31 @@ public class Node
 									+delim+temp.isLeader());
 						}
 					}
+				}
+				else if(userCmd.startsWith("put"))
+				{
+					String command[] = userCmd.split("\\s");
+					if(command.length != 2)
+					{
+						System.out.println("Enter the command correctly.");
+						_logger.info("Invalid command. Enter the command correctly.");
+					}
+					else
+					{
+						String filename = command[1];
+						// Logic - check for file at local, if exists then contact master.
+						// if replicas of file already exists, then master would deny further replicas
+						// else, master returns three ip addresses to which file will be replicated.
+						// once file is replicated in all the three vm's, master edits the file list and gossips it all.
+					}
+				}
+				else if(userCmd.startsWith("get"))
+				{
+					
+				}
+				else if(userCmd.startsWith("delete"))
+				{
+					
 				}
 				else if(userCmd.equalsIgnoreCase("quit"))
 				{
