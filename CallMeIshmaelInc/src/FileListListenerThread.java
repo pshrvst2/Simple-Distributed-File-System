@@ -77,10 +77,7 @@ public class FileListListenerThread extends Thread{
 								Node._fileMsgCounter = Integer.valueOf(msgCounter);
 							}
 						}
-						else
-						{
-							break;
-						}
+						
 					}
 					// if the counts is greater than _fileMsgCounter, replace the fileList from map 
 					if (validMsg == true)
