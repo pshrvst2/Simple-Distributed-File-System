@@ -94,6 +94,8 @@ public class FileListListenerThread extends Thread{
 						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,false);
 						fileListThread.run();
 					}
+					objInpStream.close();
+					bais.close();
 
 				}
 				catch (IOException e) 
