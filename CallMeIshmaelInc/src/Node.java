@@ -216,7 +216,8 @@ public class Node
 						
 						if(isFilePresentAtLocal)
 						{
-							Thread reqInstance = new ReqSender(command[0], command[1]);
+							String serverip=""; int p=0;
+							Thread reqInstance = new ReqSender(command[0], command[1], serverip, p);
 							reqInstance.start();
 						}
 						else
