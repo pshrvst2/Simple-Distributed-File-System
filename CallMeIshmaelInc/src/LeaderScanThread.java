@@ -74,51 +74,6 @@ public class LeaderScanThread extends Thread
 			{
 				//reset the count
 				leaderCount =0;
-				
-				/*********************************************************************
-				 * A test block, need to remove this after testing the file list Threads 
-				 *********************************************************************/		
-				if(Node._machineId == Node.getLeadId())
-				{
-					
-					
-					if(Node._fileMap.isEmpty())
-					{
-						String messageCounts = "msg#";
-						List<String> firstList = new ArrayList<String>();
-						firstList.add("0");
-						firstList.add("0");
-						firstList.add("0");
-						Node._fileMap.put(messageCounts, firstList);
-					}
-					else
-					{
-						Set<String> ips = FileListSenderThread.getTwoSuccessorIps(Node.getLeadId());
-						if (ips.size() == 2)
-						{
-							// create the file list here 
-							String counts = String.valueOf(++Node._fileMsgCounter);
-							Node._fileMap.get("msg#").set(0, counts);
-							String fileName = String.valueOf(Node._fileNameInt);
-							List<String> addressList = new ArrayList<String>();
-							// just because we have three mechine, so we need put itself self here 
-							addressList.add(Node._machineIp);
-							for( String addr : ips)
-							{
-								addressList.add(addr);
-							}
-							Node._fileMap.put(fileName, addressList);							
-							Node._fileNameInt += 1;
-							
-							// pass the file list to others 
-							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
-							fileListThread.start();
-						}
-						
-						
-					}		
-				}
-				
 			}
 		}
 	}

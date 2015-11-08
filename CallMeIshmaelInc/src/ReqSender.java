@@ -23,7 +23,7 @@ public class ReqSender extends Thread
 	private static Logger log = Logger.getLogger(ReqSender.class);
 	private final String userCommand;
 	private final String fileName;
-	private final String serverIp;
+	private final String leaderIp;
 	private final int serverPort;
 	private final String localFilePath = "/home/local/";
 	private final String sdfsFilePath = "/home/sdfs/";
@@ -32,7 +32,7 @@ public class ReqSender extends Thread
 	{
 		this.userCommand = cmd;
 		this.fileName = file;
-		this.serverIp = serverip;
+		this.leaderIp = serverip;
 		this.serverPort = p;
 	}
 
@@ -52,7 +52,7 @@ public class ReqSender extends Thread
 			try 
 			{
 				// logic to ping the master and get the list of ip's
-				socket = new Socket(serverIp, serverPort);
+				socket = new Socket(leaderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -71,9 +71,8 @@ public class ReqSender extends Thread
 				if(!listOfIp.isEmpty())
 				{
 					for(String ip : listOfIp)
-
 					{
-						if(!ip.equalsIgnoreCase(serverIp))
+						if(!ip.equalsIgnoreCase(leaderIp))
 						{
 							Socket fileTransferSocket = new Socket(ip, serverPort);
 							FileReader fileReader = new FileReader(fullFilePath);
@@ -84,8 +83,9 @@ public class ReqSender extends Thread
 							while((line = bufReader.readLine()) != null)
 							{
 								filePw.println(line);
-								System.out.println(line); 
+								//System.out.println(line); 
 							}
+							fileReader.close();
 							bufReader.close();
 							filePw.close();
 							fileTransferSocket.close();
@@ -93,15 +93,16 @@ public class ReqSender extends Thread
 						else
 						{
 							// Leader want the replica at its sdfs
-							pw.println("begin:"+userCommand+":"+fileName);
+							//pw.println("begin:"+userCommand+":"+fileName);
 							FileReader fileReader = new FileReader(fullFilePath);
 							BufferedReader bufReader = new BufferedReader(fileReader);
 							while((line = bufReader.readLine()) != null)
 							{
 								pw.println(line);
-								System.out.println(line); 
+								//System.out.println(line); 
 							}
 							bufReader.close();
+							fileReader.close();
 						}
 					}
 					// send the final ack to leader that operation is done, looks to be buggy
@@ -129,12 +130,12 @@ public class ReqSender extends Thread
 		else if(userCommand.equalsIgnoreCase("get"))
 		{
 			// get file from SDFS
-			String fullFilePath = sdfsFilePath+fileName;
+			String fullFilePath = localFilePath+fileName;
 			String line = null;
 			try 
 			{
 				// logic to ping the master and get one ip from which you can get the file.
-				socket = new Socket(serverIp, serverPort);
+				socket = new Socket(leaderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -153,7 +154,7 @@ public class ReqSender extends Thread
 					File file = new File(fullFilePath);
 					file.createNewFile();
 					PrintWriter resultWriter = new PrintWriter(file);
-					if(!remoteIp.equalsIgnoreCase(serverIp))
+					if(!remoteIp.equalsIgnoreCase(leaderIp))
 					{
 						Socket fileTransferSocket = new Socket(remoteIp, serverPort);
 						PrintWriter filePw = new PrintWriter(fileTransferSocket.getOutputStream(), true);
@@ -163,7 +164,7 @@ public class ReqSender extends Thread
 						while((line = bufReader.readLine()) != null)
 						{
 							resultWriter.println(line);
-							System.out.println(line);
+							//System.out.println(line);
 						}
 						bufReader.close();
 						filePw.close();
@@ -176,7 +177,7 @@ public class ReqSender extends Thread
 						while((line = serverReader.readLine()) != null)
 						{
 							resultWriter.println(line);
-							System.out.println(line); 
+							//System.out.println(line); 
 						}
 					}
 					resultWriter.close();
@@ -208,7 +209,7 @@ public class ReqSender extends Thread
 			try 
 			{
 				// logic to ping the master and get the list of ip's
-				socket = new Socket(serverIp, serverPort);
+				socket = new Socket(leaderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
@@ -219,47 +220,56 @@ public class ReqSender extends Thread
 				while ((returnStr = serverReader.readLine()) != null) 
 				{
 					log.info(" Thread Id " + threadId + " : " + returnStr);
+					if(returnStr.equalsIgnoreCase("NA"))
+						break;
 					listOfIp.add(returnStr);
 				}
 				int operationCount = 0;
-				for(String ip : listOfIp)
+				if(!listOfIp.isEmpty())
+				{	
+					for(String ip : listOfIp)
+					{
+						if(!ip.equalsIgnoreCase(leaderIp))
+						{
+							Socket fileDeleteSocket = new Socket(ip, serverPort);
+							PrintWriter filePw = new PrintWriter(fileDeleteSocket.getOutputStream(), true);
+							filePw.println("begin:"+userCommand+":"+fullFilePath);
+							BufferedReader bufReader = new BufferedReader(new InputStreamReader(fileDeleteSocket.getInputStream()));
+							String ack = "";
+							while((line = bufReader.readLine()) != null)
+							{
+								ack = line;
+								System.out.println(line); 
+							}
+							if(ack.equals("OK"))
+								operationCount++;
+
+							bufReader.close();
+							filePw.close();
+							fileDeleteSocket.close();
+						}
+						else
+						{
+							// Leader's sdfs file to be deleted.
+							//pw.println("begin:"+userCommand+":"+fullFilePath);
+							String ack = "";
+							while((line = serverReader.readLine()) != null)
+							{
+								ack = line;
+								System.out.println(line); 
+							}
+							if(ack.equals("OK"))
+								operationCount++;
+						}
+					}
+				}
+				else
 				{
-					if(!ip.equalsIgnoreCase(serverIp))
-					{
-						Socket fileDeleteSocket = new Socket(ip, serverPort);
-						PrintWriter filePw = new PrintWriter(fileDeleteSocket.getOutputStream(), true);
-						filePw.println("begin:"+userCommand+":"+fullFilePath);
-						BufferedReader bufReader = new BufferedReader(new InputStreamReader(fileDeleteSocket.getInputStream()));
-						String ack = "";
-						while((line = bufReader.readLine()) != null)
-						{
-							ack = line;
-							System.out.println(line); 
-						}
-						if(ack.equals("OK"))
-							operationCount++;
-						
-						bufReader.close();
-						filePw.close();
-						fileDeleteSocket.close();
-					}
-					else
-					{
-						// Leader's sdfs file to be deleted.
-						pw.println("begin:"+userCommand+":"+fullFilePath);
-						String ack = "";
-						while((line = serverReader.readLine()) != null)
-						{
-							ack = line;
-							System.out.println(line); 
-						}
-						if(ack.equals("OK"))
-							operationCount++;
-					}
+					System.out.println("File doesn't exist.");
 				}
 				
 				// send the final ack to leader that operation is done
-				if(operationCount == 3)
+				//if(operationCount == 3)
 					pw.println("end:"+userCommand+":"+fullFilePath);
 				
 				pw.close();

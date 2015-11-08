@@ -15,12 +15,10 @@ public class ReqListener extends Thread
 {
 	private static Logger log = Logger.getLogger(ReqListener.class);
 	private final int port;
-	private final String ip;
 	
-	public ReqListener(int port, String ip)
+	public ReqListener(int port)
 	{
 		this.port = port;
-		this.ip = ip;
 	}
 	
 	public void run()
@@ -43,9 +41,9 @@ public class ReqListener extends Thread
 				log.info(" Req Listener socket established, listening at port: "+port);
 			}
 
-			while (true) 
+			while (!Node._reqListenerThreadStop) 
 			{
-				new ReqListenerInstance(serverSocketListener.accept(), ip).start();
+				new ReqListenerInstance(serverSocketListener.accept()).start();
 				log.info("Listening new Req");
 			}
 		}

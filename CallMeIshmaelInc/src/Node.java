@@ -38,11 +38,12 @@ public class Node
 	public final static int _gossipFileListPort = 2001;
 	public final static int _gossipMemberListPort = 2000;
 	public final static int _TCPPort = 3000;
-	//public final static int _TCPPort2 = 3001;
+	public final static int _TCPPort2 = 3001;
 	public static String _introducerIp = "192.17.11.8";
 	public static boolean _gossipListenerThreadStop = false;
 	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
+	public static boolean _reqListenerThreadStop = false;
 	public static String _machineIp = "";
 	public static String _machineId= "";
 	public static int _TfailInMilliSec = 3000;
@@ -58,7 +59,7 @@ public class Node
 	public static int _fileMsgCounter = 0;
 
 	// need to remove this after testing the fileList threads 
-	public static int _fileNameInt = 0; 
+	//public static int _fileNameInt = 0; 
 	
 	//public static List<NodeData> _gossipList = Collections.synchronizedList(new ArrayList<NodeData>());
 	// Thread safe data structure needed to store the details of all the machines in the 
@@ -137,6 +138,10 @@ public class Node
 			//Now open TCP socket for election
 			Thread electionListener = new ElectionListenerThread(_TCPPort);
 			electionListener.start();
+			
+			//open Req Listener socket
+			Thread reqListener = new ReqListener(_TCPPort2);
+			reqListener.start();
 			
 			
 			// logic to send periodically
@@ -219,9 +224,18 @@ public class Node
 						
 						if(isFilePresentAtLocal)
 						{
-							String serverip=""; int p=0;
-							Thread reqInstance = new ReqSender(command[0], command[1], serverip, p);
-							reqInstance.start();
+							String serverip = null;
+							serverip = getLeadIp();
+							int p = _TCPPort2;
+							if(serverip != null)
+							{	
+								Thread reqInstance = new ReqSender(command[0], command[1], serverip, p);
+								reqInstance.start();
+							}
+							else
+							{
+								System.out.println("There is no Leader. File operations cannot be done now");
+							}
 						}
 						else
 						{
@@ -284,6 +298,7 @@ public class Node
 					_gossipListenerThreadStop = true;
 					_fileListListenerThreadStop = true;
 					_electionListenerThreadStop = true;
+					_reqListenerThreadStop = true;
 					Node._gossipMap.get(_machineId).setIsLeader(false);
 					Node._gossipMap.get(_machineId).setActive(false);
 					Node._gossipMap.get(_machineId).increaseHeartBeat();
@@ -441,6 +456,21 @@ public class Node
 			}
 		}
 		return leadId; 
+	}
+	
+	public static String getLeadIp()
+	{
+		String leadIp = null;
+		for (HashMap.Entry<String, NodeData> record : Node._gossipMap.entrySet())
+		{
+			if (record.getValue().isLeader() == true)
+			{
+				String temp[] = record.getKey().split(":");
+				leadIp = temp[0];
+				break;
+			}
+		}
+		return leadIp; 
 	}
 
 }
