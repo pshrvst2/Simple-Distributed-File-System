@@ -57,6 +57,8 @@ public class Node
 	public static boolean _isIntroducer = false;
 	public static int _fileMsgCounter = 0;
 
+	// need to remove this after testing the fileList threads 
+	public static int _fileNameInt = 0; 
 	
 	//public static List<NodeData> _gossipList = Collections.synchronizedList(new ArrayList<NodeData>());
 	// Thread safe data structure needed to store the details of all the machines in the 

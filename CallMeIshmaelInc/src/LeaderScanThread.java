@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -72,6 +74,29 @@ public class LeaderScanThread extends Thread
 			{
 				//reset the count
 				leaderCount =0;
+				
+				/*********************************************************************
+				 * A test block, need to remove this after testing the file list Threads 
+				 *********************************************************************/		
+				if(Node._machineId == Node.getLeadId())
+				{
+					String fileName = "File # "+ Node._fileNameInt;
+					List<String> addressList = new ArrayList<String>();
+					Set<String> ips = FileListSenderThread.getTwoSuccessorIps(Node.getLeadId());
+					if (ips.size() == 2)
+					{
+						addressList.add(Node._machineIp);
+						for( String addr : ips)
+						{
+							addressList.add(addr);
+						}
+						Node._fileMap.put(fileName, addressList);
+					}
+					Node._fileNameInt += 1;
+					Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+					fileListThread.start();
+				}
+				
 			}
 		}
 	}
