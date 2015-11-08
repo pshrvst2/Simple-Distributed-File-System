@@ -25,8 +25,8 @@ public class ReqSender extends Thread
 	private final String fileName;
 	private final String leaderIp;
 	private final int serverPort;
-	private final String localFilePath = "/home/pshrvst2/local/";
-	private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	//private final String localFilePath = "/home/pshrvst2/local/";
+	//private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
 	
 	//private final String localFilePath = "/home/xchen135/local/";
 	//private final String sdfsFilePath = "/home/xchen135/sdfs/";
@@ -50,7 +50,7 @@ public class ReqSender extends Thread
 		if(userCommand.equalsIgnoreCase("put"))
 		{
 			// get file
-			String fullFilePath = localFilePath+fileName;
+			String fullFilePath = Node.localFilePath+fileName;
 			String line = null;
 			try 
 			{
@@ -133,7 +133,7 @@ public class ReqSender extends Thread
 		else if(userCommand.equalsIgnoreCase("get"))
 		{
 			// get file from SDFS
-			String fullFilePath = localFilePath+fileName;
+			String fullFilePath = Node.localFilePath+fileName;
 			String line = null;
 			try 
 			{
@@ -207,7 +207,7 @@ public class ReqSender extends Thread
 		else if(userCommand.equalsIgnoreCase("delete"))
 		{
 			// get file
-			String fullFilePath = sdfsFilePath+fileName;
+			String fullFilePath = Node.sdfsFilePath+fileName;
 			String line = null;
 			try 
 			{

@@ -26,8 +26,8 @@ public class ReqListenerInstance extends Thread
 {
 	private static Logger log = Logger.getLogger(ReqListenerInstance.class);
 	private Socket clientSocket = null;
-	private final String localFilePath = "/home/pshrvst2/local/";
-	private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	//private final String localFilePath = "/home/pshrvst2/local/";
+	//private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
 	
 	//private final String localFilePath = "/home/xchen135/local/";
 	//private final String sdfsFilePath = "/home/xchen135/sdfs/";
@@ -60,7 +60,7 @@ public class ReqListenerInstance extends Thread
 				// its a file operation
 				if(words[1].equalsIgnoreCase("put"))
 				{
-					File file = new File(sdfsFilePath+words[2]);
+					File file = new File(Node.sdfsFilePath+words[2]);
 					file.createNewFile();
 					PrintWriter resultWriter = new PrintWriter(file);
 
@@ -78,7 +78,7 @@ public class ReqListenerInstance extends Thread
 				}
 				else if(words[1].equalsIgnoreCase("get"))
 				{
-					FileReader fileReader = new FileReader(sdfsFilePath+words[2]);
+					FileReader fileReader = new FileReader(Node.sdfsFilePath+words[2]);
 					BufferedReader bufReader = new BufferedReader(fileReader);
 					String line = null;
 					while((line = bufReader.readLine()) != null)
@@ -95,7 +95,7 @@ public class ReqListenerInstance extends Thread
 				else if(words[1].equalsIgnoreCase("delete"))
 				{
 					Runtime rt = Runtime.getRuntime();
-					String deleteCmd = "rm -rf "+sdfsFilePath+words[2];
+					String deleteCmd = "rm -rf "+Node.sdfsFilePath+words[2];
 					Process proc = rt.exec(new String[] { "bash", "-c", deleteCmd });
 					int exitValue = proc.exitValue();
 					pw.println("OK");
@@ -146,7 +146,7 @@ public class ReqListenerInstance extends Thread
 
 					if(leaderAsReplica)
 					{	
-						File file = new File(sdfsFilePath+words[1]);
+						File file = new File(Node.sdfsFilePath+words[1]);
 						file.createNewFile();
 						PrintWriter fileWriter = new PrintWriter(file);
 						while((line = reader.readLine()) != null)
@@ -228,7 +228,7 @@ public class ReqListenerInstance extends Thread
 					if(isLeaderInTheList)
 					{
 						Runtime rt = Runtime.getRuntime();
-						String deleteCmd = "rm -rf "+sdfsFilePath+words[1];
+						String deleteCmd = "rm -rf "+Node.sdfsFilePath+words[1];
 						Process proc = rt.exec(new String[] { "bash", "-c", deleteCmd });
 						int exitValue = proc.exitValue();
 						pw.println("OK");
