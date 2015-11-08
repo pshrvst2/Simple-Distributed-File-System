@@ -50,8 +50,6 @@ public class ReqSender extends Thread
 		if(userCommand.equalsIgnoreCase("put"))
 		{
 			// get file
-			String fullFilePath = Node.localFilePath+fileName;
-			String line = null;
 			try 
 			{
 				// logic to ping the master and get the list of ip's
@@ -351,6 +349,31 @@ public class ReqSender extends Thread
 				}
 				fileReader.close();
 				bufReader.close();				
+				pw.close();
+				serverReader.close();
+				socket.close();
+
+			}
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				log.error(e);
+				e.printStackTrace();
+			}
+		}
+		
+		else if(userCommand.startsWith("end:put"))
+		{
+			// emd:put command to signal the master that file operations are done and he should update the list.
+			try 
+			{
+				// logic to ping the master and get the list of ip's
+				socket = new Socket(serverIp, serverPort);
+				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw = new PrintWriter(socket.getOutputStream(), true);
+				pw.println(userCommand+":"+fileName);
+				log.info("Message flushed to leader");
+				
 				pw.close();
 				serverReader.close();
 				socket.close();
