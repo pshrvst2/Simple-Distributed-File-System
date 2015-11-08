@@ -147,7 +147,7 @@ public class Node
 			_schedulerService.scheduleAtFixedRate(new ListScanThread(), 0, 100, unit);
 			
 			// logic to check the leader status, if no leader exist, start an election
-			_schedulerService.scheduleAtFixedRate(new LeaderScanThread(), 0, 10000, unit);
+			_schedulerService.scheduleAtFixedRate(new LeaderScanThread(), 0, 2000, unit);
 			
 			
 			//logic to check whether the introducer is trying to rejoin again
