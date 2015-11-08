@@ -371,7 +371,7 @@ public class ReqSender extends Thread
 				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
-				pw.println(userCommand+":"+fileName);
+				pw.println(userCommand);
 				log.info("Message flushed to leader");
 				
 				pw.close();
