@@ -99,7 +99,7 @@ public class LeaderScanThread extends Thread
 							// create the file list here 
 							String counts = String.valueOf(++Node._fileMsgCounter);
 							Node._fileMap.get("msg#").set(0, counts);
-							String fileName = "F# "+ Node._fileNameInt;
+							String fileName = String.valueOf(Node._fileNameInt);
 							List<String> addressList = new ArrayList<String>();
 							// just because we have three mechine, so we need put itself self here 
 							addressList.add(Node._machineIp);
