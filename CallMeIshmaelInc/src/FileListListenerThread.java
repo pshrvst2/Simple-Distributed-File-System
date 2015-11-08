@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +41,8 @@ public class FileListListenerThread extends Thread{
 		try 
 		{
 			listernerSocket = new DatagramSocket(port);
-			while(!Node._gossipListenerThreadStop)
+			
+			while(!Node._fileListListenerThreadStop)
 			{
 				try 
 				{
@@ -55,28 +57,39 @@ public class FileListListenerThread extends Thread{
 					ByteArrayInputStream bais = new ByteArrayInputStream(receivedBytes);
 					ObjectInputStream objInpStream = new ObjectInputStream(bais);
 					@SuppressWarnings("unchecked")
-					HashMap<String, String[]> map = (HashMap<String, String[]>) objInpStream.readObject();
+					
+					ConcurrentHashMap<String, List<String>> map = (ConcurrentHashMap<String, List<String>>) objInpStream.readObject();
 
-
-					for (HashMap.Entry<String, String[]> record : map.entrySet())
+					// check the message counts and see whether your file list is up to date
+					for (HashMap.Entry<String, List<String>> record : map.entrySet())
 					{
 						String fileName = record.getKey().trim();
 						_logger.info("******Received entries for file name = "+fileName+"****************");
-						String[] list = record.getValue();
+						List<String> list = record.getValue();
 						if(fileName.equals("msg#"))
 						{
-							String msgCounter = list[0];
+							
+							String msgCounter = list.get(0);
 							if(Integer.valueOf(msgCounter) > Node._fileMsgCounter)
 							{
 								validMsg = true;
-								
+								// update the file message count here and copy the list later
+								Node._fileMsgCounter = Integer.valueOf(msgCounter);
 							}
 						}
 						else
 						{
 							break;
 						}
+					}
+					// if the counts is greater than _fileMsgCounter, replace the fileList from map 
+					if (validMsg == true)
+					{
+						_logger.info("FileListListenerThread: the file list got updated with counts:" + Node._fileMsgCounter);
+						Node._fileMap = map;
 						
+						
+						// TODO call the filelist sender thread to pass the list to two random member
 					}
 
 				}

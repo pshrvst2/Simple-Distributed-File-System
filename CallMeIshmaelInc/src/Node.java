@@ -64,7 +64,7 @@ public class Node
 	public static ConcurrentHashMap<String, NodeData> _gossipMap = new ConcurrentHashMap<String, NodeData>();
 	
 	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
-	public static ConcurrentHashMap<String, String[]> _fileMap = new ConcurrentHashMap<String, String[]>();
+	public static ConcurrentHashMap<String, List<String>> _fileMap = new ConcurrentHashMap<String, List<String>>();
 
 	/**
 	 * @param args To ensure : Server init has to be command line.
@@ -384,6 +384,21 @@ public class Node
 				socket.close();
 			_logger.info("Exiting from the method checkIntroducer.");
 		}
+	}
+	
+	// a simple method to pick up the leader id
+	public static String getLeadId()
+	{
+		String leadId = null;
+		for (HashMap.Entry<String, NodeData> record : Node._gossipMap.entrySet())
+		{
+			if (record.getValue().isLeader() == true)
+			{
+				leadId = record.getKey();
+				break;
+			}
+		}
+		return leadId; 
 	}
 
 }
