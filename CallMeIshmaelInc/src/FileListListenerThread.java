@@ -58,7 +58,7 @@ public class FileListListenerThread extends Thread{
 					ObjectInputStream objInpStream = new ObjectInputStream(bais);
 					@SuppressWarnings("unchecked")
 					
-					ConcurrentHashMap<String, List<String>> map = (ConcurrentHashMap<String, List<String>>) objInpStream.readObject();
+					HashMap<String, List<String>> map = (HashMap<String, List<String>>) objInpStream.readObject();
 
 					// check the message counts and see whether your file list is up to date
 					for (HashMap.Entry<String, List<String>> record : map.entrySet())
@@ -86,7 +86,8 @@ public class FileListListenerThread extends Thread{
 					if (validMsg == true)
 					{
 						_logger.info("FileListListenerThread: the file list got updated with counts:" + Node._fileMsgCounter);
-						Node._fileMap = map;
+						Node._fileMap.clear();
+						Node._fileMap.putAll(map);
 						// this will only happen when the machine is not the leader, the leader only update its filelist after the file operation is done.
 						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,false);
 						fileListThread.run();

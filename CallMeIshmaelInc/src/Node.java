@@ -66,7 +66,7 @@ public class Node
 	public static ConcurrentHashMap<String, NodeData> _gossipMap = new ConcurrentHashMap<String, NodeData>();
 	
 	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
-	public static ConcurrentHashMap<String, List<String>> _fileMap = new ConcurrentHashMap<String, List<String>>();
+	public static HashMap<String, List<String>> _fileMap = new HashMap<String, List<String>>();
 
 	/**
 	 * @param args To ensure : Server init has to be command line.
