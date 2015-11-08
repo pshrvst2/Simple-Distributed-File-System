@@ -25,8 +25,11 @@ public class ReqSender extends Thread
 	private final String fileName;
 	private final String leaderIp;
 	private final int serverPort;
-	private final String localFilePath = "/home/local/";
-	private final String sdfsFilePath = "/home/sdfs/";
+	private final String localFilePath = "/home/pshrvst2/local/";
+	private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	
+	//private final String localFilePath = "/home/xchen135/local/";
+	//private final String sdfsFilePath = "/home/xchen135/sdfs/";
 	
 	public ReqSender(String cmd, String file, String serverip, int p)
 	{

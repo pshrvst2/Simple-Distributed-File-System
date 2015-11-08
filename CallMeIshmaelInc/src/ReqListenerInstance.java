@@ -26,8 +26,11 @@ public class ReqListenerInstance extends Thread
 {
 	private static Logger log = Logger.getLogger(ReqListenerInstance.class);
 	private Socket clientSocket = null;
-	private final String localFilePath = "/home/local/";
-	private final String sdfsFilePath = "/home/sdfs/";
+	private final String localFilePath = "/home/pshrvst2/local/";
+	private final String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	
+	//private final String localFilePath = "/home/xchen135/local/";
+	//private final String sdfsFilePath = "/home/xchen135/sdfs/";
 
 	public ReqListenerInstance(Socket clientSocket) 
 	{
