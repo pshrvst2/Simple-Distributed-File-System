@@ -141,6 +141,7 @@ public class ReqListenerInstance extends Thread
 
 								pw.println(ip);
 							}
+							pw.close();
 						}
 					}
 
@@ -196,6 +197,7 @@ public class ReqListenerInstance extends Thread
 						else
 							pw.println(ip.get(1));
 					}
+					pw.close();
 					String line = null;
 					while((line = reader.readLine()) != null)
 					{
@@ -224,7 +226,7 @@ public class ReqListenerInstance extends Thread
 						pw.println(ip.get(1));
 						pw.println(ip.get(2));
 					}
-
+					pw.close();
 					if(isLeaderInTheList)
 					{
 						Runtime rt = Runtime.getRuntime();
@@ -267,7 +269,7 @@ public class ReqListenerInstance extends Thread
 				}
 			}
 
-			pw.close();
+			//pw.close();
 			reader.close();
 			writer.close();
 			clientSocket.close();
