@@ -46,7 +46,7 @@ public class LeaderScanThread extends Thread
 					if(!candidateIds.isEmpty())
 					{
 						_logger.info("Sending Election message");
-						Thread electionThread = new ElectionSenderThread(candidateIds, Node._TCPPort);
+						Thread electionThread = new ElectionSenderThread(candidateIds, Node._TCPPortForElections);
 						electionThread.start();
 					}
 				}
@@ -58,7 +58,7 @@ public class LeaderScanThread extends Thread
 						// send out the coordinate message here, since the election has taken place
 						// and no ok message return, we consider this node as leader
 						Node._gossipMap.get(Node._machineId).setElectionCounts(0);
-						Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPort,Node._machineId);
+						Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPortForElections,Node._machineId);
 						coordinatorThread.start();	
 					}
 					else

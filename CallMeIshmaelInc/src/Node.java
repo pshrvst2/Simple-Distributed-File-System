@@ -38,13 +38,15 @@ public class Node
 	public static Logger _logger = Logger.getLogger(Node.class);
 	public final static int _gossipFileListPort = 2001;
 	public final static int _gossipMemberListPort = 2000;
-	public final static int _TCPPort = 3000;
-	public final static int _TCPPort2 = 3001;
+	public final static int _TCPPortForElections = 3000;
+	public final static int _TCPPortForRequests = 3001;
+	public final static int _TCPPortForFileTransfers = 3002;
 	public static String _introducerIp = "192.17.11.84";
 	public static boolean _gossipListenerThreadStop = false;
 	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
 	public static boolean _reqListenerThreadStop = false;
+	public static boolean _fileReceiverThreadStop = false;
 	public static String _machineIp = "";
 	public static String _machineId= "";
 	public static int _TfailInMilliSec = 3000;
@@ -69,6 +71,9 @@ public class Node
 	
 	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
 	public static HashMap<String, List<String>> _fileMap = new HashMap<String, List<String>>();
+	
+	// another Hash Map for Replicate copy
+	public static HashMap<String, List<String>> _fileReplicaMap = new HashMap<String, List<String>>();
 
 	final static String localFilePath = "/home/pshrvst2/local/";
 	final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
@@ -142,12 +147,16 @@ public class Node
 			gossipListener.start();
 			
 			//Now open TCP socket for election
-			Thread electionListener = new ElectionListenerThread(_TCPPort);
+			Thread electionListener = new ElectionListenerThread(_TCPPortForElections);
 			electionListener.start();
 			
 			//open Req Listener socket
-			Thread reqListener = new ReqListener(_TCPPort2);
+			Thread reqListener = new ReqListener(_TCPPortForRequests);
 			reqListener.start();
+			
+			//open File Receive socket
+			Thread fileReceiver = new FileReceiver(_TCPPortForFileTransfers);
+			fileReceiver.start();
 			
 			
 			// logic to send periodically
@@ -231,7 +240,7 @@ public class Node
 						{
 							String serverip = null;
 							serverip = getLeadIp();
-							int p = _TCPPort2;
+							int p = _TCPPortForRequests;
 							if(serverip != null)
 							{	
 								Thread reqInstance = new ReqSender(command[0], command[1], serverip, p);
@@ -304,6 +313,7 @@ public class Node
 					_fileListListenerThreadStop = true;
 					_electionListenerThreadStop = true;
 					_reqListenerThreadStop = true;
+					_fileReceiverThreadStop = true;
 					Node._gossipMap.get(_machineId).setIsLeader(false);
 					Node._gossipMap.get(_machineId).setActive(false);
 					Node._gossipMap.get(_machineId).increaseHeartBeat();

@@ -62,7 +62,7 @@ public class ElectionListenerThread extends Thread
 					{
 						sendOkMessage(id);
 						// call coordinate thread 
-						Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPort,Node._machineId );
+						Thread coordinatorThread = new CoordinatorMessageThread(Node._TCPPortForElections,Node._machineId );
 						coordinatorThread.start();
 						/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
 						okMsgThread.start();*/
@@ -70,7 +70,7 @@ public class ElectionListenerThread extends Thread
 					else
 					{
 						// call election thread
-						Thread electionThread = new ElectionSenderThread(idList, Node._TCPPort);
+						Thread electionThread = new ElectionSenderThread(idList, Node._TCPPortForElections);
 						electionThread.start();
 						sendOkMessage(id);
 						/*Thread okMsgThread =  new OkMessageThread(Node._TCPPort,id);
@@ -188,7 +188,7 @@ public class ElectionListenerThread extends Thread
 	{
 		_logger.info("Sending OK message to: "+ip);
 		String temp[] = ip.split(":");
-		Socket socket = new Socket(temp[0], Node._TCPPort);
+		Socket socket = new Socket(temp[0], Node._TCPPortForElections);
 		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 		out.println(Node._okMessage);

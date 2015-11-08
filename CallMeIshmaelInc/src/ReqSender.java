@@ -1,5 +1,9 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  * 
@@ -73,7 +78,7 @@ public class ReqSender extends Thread
 						noResult = true;
 						break;
 					}
-					Thread fileOprReqInstance = new ReqSender("begin:"+userCommand, fileName, returnStr, serverPort);
+					Thread fileOprReqInstance = new ReqSender("begin:"+userCommand, fileName, returnStr, Node._TCPPortForFileTransfers);
 					fileOprReqInstance.start();
 					fileUpdateThreadList.add(fileOprReqInstance);
 					listOfIp.add(returnStr);
@@ -328,29 +333,26 @@ public class ReqSender extends Thread
 		{
 			// put file
 			String fullFilePath = Node.localFilePath+fileName;
-			String line = null;
+			BufferedReader bufRead = null;
 			try 
 			{
 				// logic to ping the master and get the list of ip's
 				socket = new Socket(serverIp, serverPort);
-				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				pw = new PrintWriter(socket.getOutputStream(), true);
-				pw.println(userCommand+":"+fileName);
-				log.info("Message flushed to leader");
-				
-				FileReader fileReader = new FileReader(fullFilePath);
-				pw.println("begin:"+userCommand+":"+fileName);
-				BufferedReader bufReader = new BufferedReader(fileReader);
-
-				while((line = bufReader.readLine()) != null)
-				{
-					pw.println(line);
-					//System.out.println(line); 
-				}
-				fileReader.close();
-				bufReader.close();				
-				pw.close();
-				serverReader.close();
+				//Data.O/p.Stream
+				File file = new File(fullFilePath);
+				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+				dos.writeUTF(fileName);
+				long fileSize = file.length();
+				dos.writeLong(fileSize);
+				bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+				int index;
+                while((index=bufRead.read())!=-1)
+                {
+                    dos.write(index);
+                }
+                log.info("File transfered");
+                bufRead.close();
+                dos.close();
 				socket.close();
 
 			}
