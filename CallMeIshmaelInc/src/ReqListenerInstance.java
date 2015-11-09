@@ -110,14 +110,23 @@ public class ReqListenerInstance extends Thread
 				String keyWords[] = clientCommand.split(":");
 				String receiver = keyWords[2];
 				String file = null;
-				boolean putGlag = false;
+				String putGlag = "";
 				if(keyWords.length == 4)
 				{	
-					putGlag = true;
+					putGlag = "put";
 					file = keyWords[3];
 				}
 				else
 				{
+					// have a logic to differentiate between get and replicate
+					// form of rep: [trans: ipold, ipnew, ipDelete, filename]
+					// form of get: [trans: senderip: receiverip: get: filename]
+					if(keyWords[3].startsWith("get"))
+					{
+						putGlag = "get";
+					}
+					else
+						putGlag = "rep";
 					file = keyWords[4];
 				}
 				// logic to send file.
@@ -247,7 +256,7 @@ public class ReqListenerInstance extends Thread
 						{
 							// Awesome! We found a server which has the file. Now instruct that server to put to the file to the client.
 							String receiverIp = clientSocket.getInetAddress().toString().substring(1, clientSocket.getInetAddress().toString().length());
-							String comnd = "trans"+":"+senderIp+":"+receiverIp;
+							String comnd = "trans"+":"+senderIp+":"+receiverIp+":get";
 							Thread fileOprReqInstance = new ReqSender(comnd, words[1], Node.getLeadIp(), Node._TCPPortForRequests);
 							fileOprReqInstance.start();
 							while(fileOprReqInstance.isAlive())
@@ -432,7 +441,7 @@ public class ReqListenerInstance extends Thread
 		}
 	}
 	
-	public void putFile(String fileName, String receiverIp, boolean putFlag)
+	public void putFile(String fileName, String receiverIp, String putFlag)
 	{
 		// put file
 		String fullFilePath = Node.sdfsFilePath+fileName;
@@ -445,10 +454,7 @@ public class ReqListenerInstance extends Thread
 			File file = new File(fullFilePath);
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 			
-			if(putFlag)
-				fileName = fileName+":put";
-			else
-				fileName = fileName+":rep";
+			fileName = fileName+":"+putFlag;
 			
 			dos.writeUTF(fileName);
 			long fileSize = file.length();

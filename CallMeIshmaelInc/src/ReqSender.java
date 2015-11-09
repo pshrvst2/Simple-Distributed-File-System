@@ -191,7 +191,7 @@ public class ReqSender extends Thread
 					remoteIp = returnStr;
 				}
 				
-				if(remoteIp.equals("NF"))
+				if(remoteIp.equals("NA"))
 				{
 					System.out.println("No such file at SDFS");
 				}
