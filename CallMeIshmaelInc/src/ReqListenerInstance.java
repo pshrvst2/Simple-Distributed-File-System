@@ -98,8 +98,8 @@ public class ReqListenerInstance extends Thread
 				{
 					Runtime rt = Runtime.getRuntime();
 					String deleteCmd = "rm -rf "+Node.sdfsFilePath+words[2];
-					Process proc = rt.exec(new String[] { "bash", "-c", deleteCmd });
-					int exitValue = proc.exitValue();
+					rt.exec(new String[] { "bash", "-c", deleteCmd });
+					
 					pw.println("OK");
 				}
 
