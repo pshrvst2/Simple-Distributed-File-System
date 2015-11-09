@@ -56,10 +56,14 @@ public class FileListSenderThread extends Thread
 			for(HashMap.Entry<String, List<String>> record: Node._fileMap.entrySet())
 			{
 				map.put(record.getKey(), record.getValue());
-				_logger.info("file info: file name " + record.getKey()
-						+ "|| addr1: " + record.getValue().get(0)
-						+ "|| addr2: " + record.getValue().get(1)
-						+ "|| addr3: " + record.getValue().get(2));
+				if(record.getValue().size()==3)
+				{
+					_logger.info("file info: file name " + record.getKey()
+							+ "|| addr1: " + record.getValue().get(0)
+							+ "|| addr2: " + record.getValue().get(1)
+							+ "|| addr3: " + record.getValue().get(2));
+				}
+				
 			}
 			if (!ip2bSent.isEmpty()) 
 			{
