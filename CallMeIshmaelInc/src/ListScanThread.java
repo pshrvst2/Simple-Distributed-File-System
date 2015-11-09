@@ -188,7 +188,7 @@ public class ListScanThread extends Thread {
 	}
 	
 
-	public void updateFileListAfterReplica(String filename, String ipDelete, String ipNew)
+	/*public void updateFileListAfterReplica(String filename, String ipDelete, String ipNew)
 	{
 		for (HashMap.Entry<String, List<String>> record : Node._fileMap.entrySet()) 
 		{
@@ -219,5 +219,5 @@ public class ListScanThread extends Thread {
 				Node._fileMsgCounter = Integer.valueOf(count);
 			}
 		}
-	}
+	}*/
 }

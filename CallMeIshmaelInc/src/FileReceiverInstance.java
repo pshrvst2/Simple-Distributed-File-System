@@ -30,9 +30,17 @@ public class FileReceiverInstance extends Thread
 		try 
 		{
 			DataInputStream dataIpStream = new DataInputStream(clientSocket.getInputStream());
-			String fileName = dataIpStream.readUTF();
+			String fileNameWithType = dataIpStream.readUTF();
+			String keyWord[] = fileNameWithType.split(":");
+			String absoluteFilePath = null;
+			
+			if(keyWord[1].equals("get"))
+				absoluteFilePath = Node.localFilePath+keyWord[0];
+			else
+				absoluteFilePath = Node.sdfsFilePath+keyWord[0]; 
+			
             long fileSize = dataIpStream.readLong();
-            String absoluteFilePath = Node.sdfsFilePath+fileName;
+           
             File downloadedFile = new File(absoluteFilePath);
             DataOutputStream dos = new DataOutputStream(new FileOutputStream(downloadedFile)); 
             for(int i =0;i<fileSize;i++)

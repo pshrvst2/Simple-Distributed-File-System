@@ -108,13 +108,20 @@ public class ReqListenerInstance extends Thread
 			{
 				// trans:sender:receiver:fileName
 				String keyWords[] = clientCommand.split(":");
-				String command = keyWords[0];
-				String sender = keyWords[1];
 				String receiver = keyWords[2];
-				String file = keyWords[3];
-				
+				String file = null;
+				boolean putGlag = false;
+				if(keyWords.length == 4)
+				{	
+					putGlag = true;
+					file = keyWords[3];
+				}
+				else
+				{
+					file = keyWords[4];
+				}
 				// logic to send file.
-				putFile(clientSocket, file, receiver);
+				putFile(file, receiver, putGlag);
 				pw.println("OK");
 				
 			}
@@ -425,7 +432,7 @@ public class ReqListenerInstance extends Thread
 		}
 	}
 	
-	public void putFile(Socket socket, String fileName, String receiverIp)
+	public void putFile(String fileName, String receiverIp, boolean putFlag)
 	{
 		// put file
 		String fullFilePath = Node.sdfsFilePath+fileName;
@@ -433,10 +440,16 @@ public class ReqListenerInstance extends Thread
 		try 
 		{
 			// logic to ping the master and get the list of ip's
-			socket = new Socket(receiverIp, Node._TCPPortForFileTransfers);
+			Socket socket = new Socket(receiverIp, Node._TCPPortForFileTransfers);
 			//Data.O/p.Stream
 			File file = new File(fullFilePath);
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			
+			if(putFlag)
+				fileName = fileName+":put";
+			else
+				fileName = fileName+":rep";
+			
 			dos.writeUTF(fileName);
 			long fileSize = file.length();
 			dos.writeLong(fileSize);

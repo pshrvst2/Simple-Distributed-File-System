@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -381,25 +382,28 @@ public class ReqSender extends Thread
 			{
 				String ip[] = userCommand.split(":");
 				String senderIp = null;
-				String recIp = null;
-				String oldIp = null;
-				if(ip.length == 3)
-				{	
-					senderIp = ip[1];
-					recIp = ip[2];
-				}
-				else if(ip.length == 4)
-				{
-					senderIp = ip[1];
-					recIp = ip[2];
-					oldIp = ip[3];
-				}
+
+				senderIp = ip[1];
+				
 				socket = new Socket(senderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);
 				pw.println(userCommand+":"+fileName);
 				log.info("Message flushed to leader");
+				String returnStr = "";
 				// TODO wait logic
+				while ((returnStr = serverReader.readLine()) != null) 
+				{
+					log.info(returnStr);
+					if(returnStr.equalsIgnoreCase("OK"))
+					{
+						System.out.println("file trasn is completed");
+					}
+				}
+				
+				if(ip.length == 4)
+					updateFileListAfterReplica(fileName, ip[3], ip[2]);
+				
 				pw.close();
 				serverReader.close();
 				socket.close();
@@ -410,6 +414,39 @@ public class ReqSender extends Thread
 				// TODO Auto-generated catch block
 				log.error(e);
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void updateFileListAfterReplica(String filename, String ipDelete, String ipNew)
+	{
+		for (HashMap.Entry<String, List<String>> record : Node._fileMap.entrySet()) 
+		{
+			if(record.getKey().equals(filename))
+			{
+				List<String> newIpList = new ArrayList<String>();
+				for(String ip : record.getValue())
+				{
+					if(ip != ipDelete)
+					{
+						newIpList.add(ip);
+					}
+					else
+					{
+						newIpList.add(ipNew);
+					}
+				}
+				Node._fileMap.remove(filename);
+				Node._fileMap.put(filename, newIpList);
+			}
+			else if(record.getKey().equals("msg#"))
+			{
+				
+				String msgCounter = record.getValue().get(0);
+				int count =Integer.valueOf(msgCounter);
+				count++;
+				record.getValue().set(0, String.valueOf(count));
+				Node._fileMsgCounter = Integer.valueOf(count);
 			}
 		}
 	}
