@@ -444,7 +444,7 @@ public class ReqSender extends Thread
 				List<String> newIpList = new ArrayList<String>();
 				for(String ip : record.getValue())
 				{
-					if(ip != ipDelete)
+					if(!ip.equalsIgnoreCase(ipDelete))
 					{
 						newIpList.add(ip);
 					}
