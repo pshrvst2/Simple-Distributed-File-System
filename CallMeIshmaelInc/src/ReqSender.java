@@ -240,7 +240,7 @@ public class ReqSender extends Thread
 						//{
 							Socket fileDeleteSocket = new Socket(ip, serverPort);
 							PrintWriter filePw = new PrintWriter(fileDeleteSocket.getOutputStream(), true);
-							filePw.println("begin:"+userCommand+":"+fullFilePath);
+							filePw.println("begin:"+userCommand+":"+fileName);
 							BufferedReader bufReader = new BufferedReader(new InputStreamReader(fileDeleteSocket.getInputStream()));
 							String ack = "";
 							while((line = bufReader.readLine()) != null)
@@ -281,6 +281,7 @@ public class ReqSender extends Thread
 				Socket fileDeleteListUpdateSocket = new Socket(Node.getLeadIp(), serverPort);
 				PrintWriter filePw = new PrintWriter(fileDeleteListUpdateSocket.getOutputStream(), true);
 				filePw.println("end:"+userCommand+":"+fileName);
+				System.out.println("end:"+userCommand+":"+fileName);
 
 				filePw.close();
 				fileDeleteListUpdateSocket.close();
