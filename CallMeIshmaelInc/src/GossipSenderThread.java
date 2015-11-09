@@ -68,6 +68,9 @@ public class GossipSenderThread extends Thread
 				}
 			}
 			// _logger.info("Sender thread is activated! sending ends");
+			objOpStream.close();
+			byteArrayOutputStream.close();
+			senderSocket.close();
 		} 
 		catch (SocketException e1) 
 		{
