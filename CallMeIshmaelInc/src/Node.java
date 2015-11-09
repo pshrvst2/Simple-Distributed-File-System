@@ -386,15 +386,15 @@ public class Node
 		catch (UnknownHostException e) 
 		{
 			_logger.error(e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) 
 		{
 			_logger.error(e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (InterruptedException e) 
 		{
 			_logger.error(e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		finally
 		{
@@ -510,7 +510,7 @@ public class Node
 		catch(IOException ioExcep)
 		{
 			_logger.error(ioExcep);
-			ioExcep.printStackTrace();
+			//ioExcep.printStackTrace();
 		} 
 		finally
 		{
