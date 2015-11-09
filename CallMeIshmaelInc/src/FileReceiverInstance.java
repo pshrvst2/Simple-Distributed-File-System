@@ -35,8 +35,10 @@ public class FileReceiverInstance extends Thread
 			String keyWord[] = fileNameWithType.split(":");
 			String absoluteFilePath = null;
 			
-			if(keyWord[1].equals("put"))
+			if(keyWord[1].equals("get"))
 				absoluteFilePath = Node.localFilePath+keyWord[0];
+			else if(keyWord[1].equals("put"))
+				absoluteFilePath = Node.sdfsFilePath+keyWord[0];
 			else
 				absoluteFilePath = Node.sdfsFilePath+keyWord[0]; 
 			
