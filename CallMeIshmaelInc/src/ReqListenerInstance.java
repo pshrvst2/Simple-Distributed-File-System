@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -102,12 +104,26 @@ public class ReqListenerInstance extends Thread
 				}
 
 			}
+			else if(clientCommand.startsWith(("trans")))
+			{
+				// trans:sender:receiver:fileName
+				String keyWords[] = clientCommand.split(":");
+				String command = keyWords[0];
+				String sender = keyWords[1];
+				String receiver = keyWords[2];
+				String file = keyWords[3];
+				
+				// logic to send file.
+				putFile(clientSocket, file, receiver);
+				
+			}
 			else if(clientCommand.startsWith("end"))
 			{
 				// its an ACK from the client. Now update your member list.
 				
 				// The entire command will be in the form of 
 				// end:put:foo-ip1:ip2:ip3:
+				// end:delete:foo
 
 				String entireCommand = clientCommand;
 				String basicPart[] = entireCommand.split("-");
@@ -208,21 +224,31 @@ public class ReqListenerInstance extends Thread
 					else
 					{
 						List<String> ip = Node._fileMap.get(words[1]);
+						String senderIp = null;
 						if(!ip.get(0).equalsIgnoreCase(Node.getLeadIp()))
-							pw.println(ip.get(0)); // later the change the logic to get(random)
-						else
-							pw.println(ip.get(1));
-					}
-					pw.close();
-					String line = null;
-					while((line = reader.readLine()) != null)
-					{
-						System.out.println(line);
-						if(line.startsWith("end"))
 						{
-							break;
+							senderIp = ip.get(0);
+							pw.println(senderIp); // later the change the logic to get(random)
+						}
+						else
+						{
+							senderIp = ip.get(1);
+							pw.println(senderIp);
+						}
+						if(senderIp != null)
+						{
+							// Awesome! We found a server which has the file. Now instruct that server to put to the file to the client.
+							String receiverIp = clientSocket.getInetAddress().toString();
+							String comnd = "trans"+":"+senderIp+":"+receiverIp;
+							Thread fileOprReqInstance = new ReqSender(comnd, words[1], Node.getLeadIp(), Node._TCPPortForRequests);
+							fileOprReqInstance.start();
+							while(fileOprReqInstance.isAlive())
+							{
+								// do nothing, just wait
+							}
 						}
 					}
+					pw.close();
 				}
 				else if(words[0].equalsIgnoreCase("delete"))
 				{
@@ -395,6 +421,41 @@ public class ReqListenerInstance extends Thread
 			// pass the file list to others 
 			Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
 			fileListThread.start();
+		}
+	}
+	
+	public void putFile(Socket socket, String fileName, String receiverIp)
+	{
+		// put file
+		String fullFilePath = Node.sdfsFilePath+fileName;
+		BufferedReader bufRead = null;
+		try 
+		{
+			// logic to ping the master and get the list of ip's
+			socket = new Socket(receiverIp, Node._TCPPortForFileTransfers);
+			//Data.O/p.Stream
+			File file = new File(fullFilePath);
+			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			dos.writeUTF(fileName);
+			long fileSize = file.length();
+			dos.writeLong(fileSize);
+			bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			int index;
+			while((index=bufRead.read())!=-1)
+			{
+				dos.write(index);
+			}
+			log.info("File transfered");
+			bufRead.close();
+			dos.close();
+			socket.close();
+
+		}
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			log.error(e);
+			e.printStackTrace();
 		}
 	}
 

@@ -169,13 +169,10 @@ public class ReqSender extends Thread
 				e.printStackTrace();
 			}
 			
-		}
-		
+		}	
 		else if(userCommand.equalsIgnoreCase("get"))
 		{
 			// get file from SDFS
-			String fullFilePath = Node.localFilePath+fileName;
-			String line = null;
 			try 
 			{
 				// logic to ping the master and get one ip from which you can get the file.
@@ -193,44 +190,11 @@ public class ReqSender extends Thread
 					remoteIp = returnStr;
 				}
 				
-				if(!remoteIp.equals("NF"))
-				{
-					File file = new File(fullFilePath);
-					file.createNewFile();
-					PrintWriter resultWriter = new PrintWriter(file);
-					if(!remoteIp.equalsIgnoreCase(serverIp))
-					{
-						Socket fileTransferSocket = new Socket(remoteIp, serverPort);
-						PrintWriter filePw = new PrintWriter(fileTransferSocket.getOutputStream(), true);
-						filePw.println("begin:"+userCommand+":"+fileName);
-						BufferedReader bufReader = new BufferedReader(new InputStreamReader(fileTransferSocket.getInputStream()));
-						
-						while((line = bufReader.readLine()) != null)
-						{
-							resultWriter.println(line);
-							//System.out.println(line);
-						}
-						bufReader.close();
-						filePw.close();
-						fileTransferSocket.close();
-					}
-					else
-					{
-						// Leader sent its own location
-						pw.println("begin:"+userCommand+":"+fileName);
-						while((line = serverReader.readLine()) != null)
-						{
-							resultWriter.println(line);
-							//System.out.println(line); 
-						}
-					}
-					resultWriter.close();
-				}
-				else
+				if(remoteIp.equals("NF"))
 				{
 					System.out.println("No such file at SDFS");
 				}
-				pw.println("end:"+userCommand+":"+fileName);
+				//pw.println("end:"+userCommand+":"+fileName);
 				pw.close();
 				serverReader.close();
 				socket.close();
@@ -241,10 +205,8 @@ public class ReqSender extends Thread
 				// TODO Auto-generated catch block
 				log.error(e);
 				e.printStackTrace();
-			}
-			
+			}	
 		}
-		
 		else if(userCommand.equalsIgnoreCase("delete"))
 		{
 			// get file
@@ -366,7 +328,7 @@ public class ReqSender extends Thread
 		
 		else if(userCommand.startsWith("end:put"))
 		{
-			// emd:put command to signal the master that file operations are done and he should update the list.
+			// end:put command to signal the master that file operations are done and he should update the list.
 			try 
 			{
 				// logic to ping the master and get the list of ip's
@@ -388,7 +350,56 @@ public class ReqSender extends Thread
 				e.printStackTrace();
 			}
 		}
-		
+		else if(userCommand.startsWith("end:delete"))
+		{
+			// end:delete command to signal the master that file delete is done he should update the list.
+			try 
+			{
+				// logic to ping the master and get the list of ip's
+				socket = new Socket(serverIp, serverPort);
+				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw = new PrintWriter(socket.getOutputStream(), true);
+				pw.println(userCommand);
+				log.info("Message flushed to leader");
+				
+				pw.close();
+				serverReader.close();
+				socket.close();
+
+			}
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				log.error(e);
+				e.printStackTrace();
+			}
+		}
+		else if(userCommand.startsWith(("trans")))
+		{
+			// trans command to put a file from sender to receiver.
+			try 
+			{
+				String ip[] = userCommand.split(":");
+				String senderIp = ip[1];
+				String recIp = ip[2];
+				socket = new Socket(senderIp, serverPort);
+				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				pw = new PrintWriter(socket.getOutputStream(), true);
+				pw.println(userCommand+":"+fileName);
+				log.info("Message flushed to leader");
+				// TODO wait logic
+				pw.close();
+				serverReader.close();
+				socket.close();
+
+			}
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				log.error(e);
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public String getUserCommand() {
