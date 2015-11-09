@@ -42,7 +42,7 @@ public class Node
 	public final static int _TCPPortForElections = 3000;
 	public final static int _TCPPortForRequests = 3001;
 	public final static int _TCPPortForFileTransfers = 3002;
-	public static String _introducerIp = "192.17.11.98";
+	public static String _introducerIp = "172.22.151.17";
 	public static boolean _gossipListenerThreadStop = false;
 	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
