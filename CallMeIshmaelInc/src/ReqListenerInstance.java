@@ -115,6 +115,7 @@ public class ReqListenerInstance extends Thread
 				{	
 					putGlag = "put";
 					file = keyWords[3];
+					putFile(file, receiver, putGlag);
 				}
 				else
 				{
@@ -124,13 +125,26 @@ public class ReqListenerInstance extends Thread
 					if(keyWords[3].startsWith("get"))
 					{
 						putGlag = "get";
+						file = keyWords[4];
+						putFile(file, receiver, putGlag);
 					}
 					else
+					{
+						// communicate with the sender and ask him to send the file to the receiver
+						 String senderIp = keyWords[1];
+						Socket newSocket = new Socket(senderIp, Node._TCPPortForRequests);
+						PrintWriter pw1 = new PrintWriter(newSocket.getOutputStream(), true);
+						pw.println("trans:"+senderIp+":"+receiver+":"+file);
+						System.out.println("Sending commadn to sender: ");
+						System.out.println("trans:"+senderIp+":"+receiver+":"+file);
+						log.info("Message flushed to Sender");
+						pw1.close();
+						newSocket.close();
 						putGlag = "rep";
-					file = keyWords[4];
+					}
+					
 				}
-				// logic to send file.
-				putFile(file, receiver, putGlag);
+				
 				pw.println("OK");
 				
 			}
