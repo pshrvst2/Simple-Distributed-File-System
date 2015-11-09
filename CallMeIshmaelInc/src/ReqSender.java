@@ -58,6 +58,10 @@ public class ReqSender extends Thread
 			// get file
 			try 
 			{
+				// check the time used to do the put method
+				long start = System.currentTimeMillis();
+				
+				
 				// logic to ping the master and get the list of ip's
 				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -113,6 +117,9 @@ public class ReqSender extends Thread
 						// do nothing and wait for it to end
 					}
 				}
+				
+				long elapsedTimeMillis = System.currentTimeMillis()-start;
+				System.out.println("*********** the time for puting the file ["+fileName+"] is "+ String.valueOf(elapsedTimeMillis)+"*******");
 				/*if(!listOfIp.isEmpty())
 				{
 					for(String ip : listOfIp)
@@ -176,6 +183,9 @@ public class ReqSender extends Thread
 			// get file from SDFS
 			try 
 			{
+				// check the time used to do the get method
+				long start = System.currentTimeMillis();
+				
 				// logic to ping the master and get one ip from which you can get the file.
 				socket = new Socket(serverIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -199,7 +209,8 @@ public class ReqSender extends Thread
 				pw.close();
 				serverReader.close();
 				socket.close();
-				
+				long elapsedTimeMillis = System.currentTimeMillis()-start;
+				System.out.println("*********** the time for getting the file ["+fileName+"] is "+ String.valueOf(elapsedTimeMillis)+"*******");
 			}
 			catch (IOException e) 
 			{
