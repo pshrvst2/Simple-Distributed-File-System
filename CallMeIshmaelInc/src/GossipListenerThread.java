@@ -140,9 +140,10 @@ public class GossipListenerThread extends Thread
 							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
 							fileListThread.run();
 						}
-						Node._gossipMap.put(id, nodeData);
-						Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
-					}					
+					}
+					
+					Node._gossipMap.put(id, nodeData);
+					Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
 					
 				}
 				// heartbeat of the process is more than the local copy's heartbeart. That means the process has
