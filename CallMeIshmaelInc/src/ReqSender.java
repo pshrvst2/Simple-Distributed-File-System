@@ -466,6 +466,9 @@ public class ReqSender extends Thread
 				Node._fileMsgCounter = Integer.valueOf(count);
 			}
 		}
+		
+		Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true, null);
+		fileListThread.run();
 	}
 
 	public String getUserCommand() {
