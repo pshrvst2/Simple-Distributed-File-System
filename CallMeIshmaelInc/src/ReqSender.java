@@ -380,8 +380,20 @@ public class ReqSender extends Thread
 			try 
 			{
 				String ip[] = userCommand.split(":");
-				String senderIp = ip[1];
-				String recIp = ip[2];
+				String senderIp = null;
+				String recIp = null;
+				String oldIp = null;
+				if(ip.length == 3)
+				{	
+					senderIp = ip[1];
+					recIp = ip[2];
+				}
+				else if(ip.length == 4)
+				{
+					senderIp = ip[1];
+					recIp = ip[2];
+					oldIp = ip[3];
+				}
 				socket = new Socket(senderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);

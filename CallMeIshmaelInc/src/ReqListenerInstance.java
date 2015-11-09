@@ -115,6 +115,7 @@ public class ReqListenerInstance extends Thread
 				
 				// logic to send file.
 				putFile(clientSocket, file, receiver);
+				pw.println("OK");
 				
 			}
 			else if(clientCommand.startsWith("end"))
