@@ -390,8 +390,8 @@ public class ReqSender extends Thread
 				String ip[] = userCommand.split(":");
 				String senderIp = null;
 
-				senderIp = ip[1];
-				
+				senderIp = ip[2];
+				System.out.println("Try to do replica info: "+userCommand+":"+fileName);
 				socket = new Socket(senderIp, serverPort);
 				serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				pw = new PrintWriter(socket.getOutputStream(), true);

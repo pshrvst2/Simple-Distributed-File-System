@@ -78,7 +78,7 @@ public class ListScanThread extends Thread {
 						
 						if(Node._gossipMap.size()>=3)
 						{
-							HashMap<String, List<String>> newMap = getReplicaMap(nodeId);
+							HashMap<String, List<String>> newMap = getReplicaMap(nodeId.substring(0, nodeId.indexOf(":")));
 							for (HashMap.Entry<String, List<String>> r : newMap.entrySet())
 							{							
 								// the form here is (ipDeleted, ipOLd, ipNew)
@@ -103,7 +103,7 @@ public class ListScanThread extends Thread {
 						// we only do replica when we have three members
 						if(Node._gossipMap.size()>=3)
 						{
-							HashMap<String, List<String>> newMap = getReplicaMap(nodeId);
+							HashMap<String, List<String>> newMap = getReplicaMap(nodeId.substring(0, nodeId.indexOf(":")));
 							for (HashMap.Entry<String, List<String>> r : newMap.entrySet())
 							{
 								Node._fileReplicaMap.put(r.getKey(), r.getValue());
@@ -144,11 +144,11 @@ public class ListScanThread extends Thread {
 			 if(record.getValue().contains(ip))
 			 {
 				 List<String> ipList = record.getValue();
-				 String newReplicaIp = getANewReplicaIp(ipList);
+				 String newReplicaIp = getANewReplicaIp(ipList,ip);
 				 String oldReplicaIp = null;
 				 for(String existip : ipList)
 				 {
-					 if(existip != ip)
+					 if(!existip.equals(ip))
 					 {
 						 oldReplicaIp= existip;
 						 break;
@@ -170,7 +170,7 @@ public class ListScanThread extends Thread {
 		return map;
 	}
 	
-	public String getANewReplicaIp(List<String> existIpList)
+	public String getANewReplicaIp(List<String> existIpList, String deletedIp)
 	{
 		String newIp = null;
 		
@@ -179,8 +179,12 @@ public class ListScanThread extends Thread {
 			// check if the ip inside the list, if not use this as a new ip
 			if (!existIpList.contains(record.getKey().substring(0, record.getKey().indexOf(":"))))
 			{
-				newIp= record.getKey().substring(0, record.getKey().indexOf(":"));
-				break;
+				if(!record.getKey().substring(0, record.getKey().indexOf(":")).equals(deletedIp))
+				{
+					newIp= record.getKey().substring(0, record.getKey().indexOf(":"));
+					break;
+				}
+				
 			}
 		}
 		
