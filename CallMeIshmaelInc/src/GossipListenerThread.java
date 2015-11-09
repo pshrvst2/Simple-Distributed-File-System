@@ -133,13 +133,16 @@ public class GossipListenerThread extends Thread
 						nodeData.setPId(temp+1);
 					}
 					// check if the leader try to add a new member, gossip the fileList, so the new member could have it. 
-					if(Node.getLeadId().equals(Node._machineId))
+					if(Node.getLeadId()!=null)
 					{
-						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
-						fileListThread.run();
-					}
-					Node._gossipMap.put(id, nodeData);
-					Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
+						if(Node.getLeadId().equals(Node._machineId))
+						{
+							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+							fileListThread.run();
+						}
+						Node._gossipMap.put(id, nodeData);
+						Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
+					}					
 					
 				}
 				// heartbeat of the process is more than the local copy's heartbeart. That means the process has
