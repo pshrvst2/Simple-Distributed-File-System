@@ -70,7 +70,9 @@ public class IntroducerRejoinThread extends Thread
 			dataPacket.setPort(Node._gossipMemberListPort);
 
 			socket.send(dataPacket);
-
+			
+			byteArrayOutputStream.close();			
+			objOpStream.close();
 		}
 		catch(SocketException ex)
 		{

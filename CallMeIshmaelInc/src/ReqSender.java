@@ -402,7 +402,17 @@ public class ReqSender extends Thread
 				}
 				
 				if(ip.length == 4)
-					updateFileListAfterReplica(fileName, ip[3], ip[2]);
+				{
+					if(ip[3].startsWith("get"))
+					{
+						// they are doing get, what the hell u wanna update the list!!!
+					}
+					else
+					{
+						updateFileListAfterReplica(fileName, ip[3], ip[2]);
+					}		
+				}
+					
 				
 				pw.close();
 				serverReader.close();

@@ -81,8 +81,11 @@ public class Node
 	//final static String localFilePath = "/home/pshrvst2/local/";
 	//final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
 	
-	final static String localFilePath = "/home/xchen135/local/";
-	final static String sdfsFilePath = "/home/xchen135/sdfs/";
+	//final static String localFilePath = "/home/xchen135/local/";
+    //final static String sdfsFilePath = "/home/xchen135/sdfs/";
+	
+	final static String localFilePath = "/home/local/";
+	final static String sdfsFilePath = "/home/sdfs/";
 	/**
 	 * @param args To ensure : Server init has to be command line.
 	 */
