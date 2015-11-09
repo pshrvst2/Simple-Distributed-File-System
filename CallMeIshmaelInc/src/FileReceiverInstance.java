@@ -29,6 +29,7 @@ public class FileReceiverInstance extends Thread
 	{
 		try 
 		{
+			log.info("File transfer started at File receiver instance");
 			DataInputStream dataIpStream = new DataInputStream(clientSocket.getInputStream());
 			String fileNameWithType = dataIpStream.readUTF();
 			String keyWord[] = fileNameWithType.split(":");
@@ -39,6 +40,7 @@ public class FileReceiverInstance extends Thread
 			else
 				absoluteFilePath = Node.sdfsFilePath+keyWord[0]; 
 			
+			log.info("File saved is: "+absoluteFilePath);
             long fileSize = dataIpStream.readLong();
            
             File downloadedFile = new File(absoluteFilePath);
@@ -54,6 +56,7 @@ public class FileReceiverInstance extends Thread
             dos.close();
             dataIpStream.close();
             clientSocket.close();
+            log.info("File received. Socket connection instance closed");
             
 		}
 		catch (IOException e) 
