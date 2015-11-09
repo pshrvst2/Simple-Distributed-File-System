@@ -280,7 +280,7 @@ public class ReqSender extends Thread
 				pw.println("end:"+userCommand+":"+fileName);
 				Socket fileDeleteListUpdateSocket = new Socket(Node.getLeadIp(), serverPort);
 				PrintWriter filePw = new PrintWriter(fileDeleteListUpdateSocket.getOutputStream(), true);
-				filePw.println("end:"+userCommand+":"+fullFilePath);
+				filePw.println("end:"+userCommand+":"+fileName);
 
 				filePw.close();
 				fileDeleteListUpdateSocket.close();
