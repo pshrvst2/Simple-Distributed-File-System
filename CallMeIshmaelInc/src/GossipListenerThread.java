@@ -132,6 +132,12 @@ public class GossipListenerThread extends Thread
 						}
 						nodeData.setPId(temp+1);
 					}
+					// check if the leader try to add a new member, gossip the fileList, so the new member could have it. 
+					if(Node.getLeadId().equals(Node._machineId))
+					{
+						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+						fileListThread.run();
+					}
 					Node._gossipMap.put(id, nodeData);
 					Node._gossipMap.get(id).setLastRecordedTime(System.currentTimeMillis());
 					
