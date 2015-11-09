@@ -42,7 +42,7 @@ public class Node
 	public final static int _TCPPortForElections = 3000;
 	public final static int _TCPPortForRequests = 3001;
 	public final static int _TCPPortForFileTransfers = 3002;
-	public static String _introducerIp = "192.17.11.84";
+	public static String _introducerIp = "192.17.11.98";
 	public static boolean _gossipListenerThreadStop = false;
 	public static boolean _fileListListenerThreadStop = false;
 	public static boolean _electionListenerThreadStop = false;
@@ -71,18 +71,18 @@ public class Node
 	public static ConcurrentHashMap<String, NodeData> _gossipMap = new ConcurrentHashMap<String, NodeData>();
 	
 	// a new HashMap for storing the file list. This map can be accessed by different threads so it better to use concurrent hashmap
-	public static HashMap<String, List<String>> _fileMap = new HashMap<String, List<String>>();
+	public static ConcurrentHashMap<String, List<String>> _fileMap = new ConcurrentHashMap<String, List<String>>();
 	
 	// another Hash Map for Replicate copy
-	public static HashMap<String, List<String>> _fileReplicaMap = new HashMap<String, List<String>>();
+	public static ConcurrentHashMap<String, List<String>> _fileReplicaMap = new ConcurrentHashMap<String, List<String>>();
 	// detect whether we have the leader, if not, may wanna keep above hash map, else, clean up the has map cause job has been done by leader
 	public static boolean _hasLeader = false;
 
-	final static String localFilePath = "/home/pshrvst2/local/";
-	final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	//final static String localFilePath = "/home/pshrvst2/local/";
+	//final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
 	
-	//final static String localFilePath = "/home/xchen135/local/";
-    //final static String sdfsFilePath = "/home/xchen135/sdfs/";
+	final static String localFilePath = "/home/xchen135/local/";
+    final static String sdfsFilePath = "/home/xchen135/sdfs/";
 	
 	/**
 	 * @param args To ensure : Server init has to be command line.
