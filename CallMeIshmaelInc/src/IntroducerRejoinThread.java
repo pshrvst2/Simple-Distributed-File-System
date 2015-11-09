@@ -77,12 +77,12 @@ public class IntroducerRejoinThread extends Thread
 		catch(SocketException ex)
 		{
 			_logger.error(ex);
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		catch(IOException ioExcep)
 		{
 			_logger.error(ioExcep);
-			ioExcep.printStackTrace();
+			//ioExcep.printStackTrace();
 		} 
 		finally
 		{

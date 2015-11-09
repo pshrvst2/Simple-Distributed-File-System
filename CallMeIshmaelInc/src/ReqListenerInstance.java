@@ -427,7 +427,7 @@ public class ReqListenerInstance extends Thread
 			}
 			Node._fileMap.put(fileName, addressList);
 			// pass the file list to others 
-			Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+			Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true,null);
 			fileListThread.start();
 		}
 		else if(operation.equalsIgnoreCase("delete"))
@@ -436,7 +436,7 @@ public class ReqListenerInstance extends Thread
 			Node._fileMap.get("msg#").set(0, counts);
 			Node._fileMap.remove(fileName);
 			// pass the file list to others 
-			Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+			Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true,null);
 			fileListThread.start();
 		}
 	}

@@ -20,13 +20,16 @@ public class FileListSenderThread extends Thread
 	public static Logger _logger = Logger.getLogger(FileListSenderThread.class);
 	private int port;
 	private boolean isLeader; 
+	private String newMemberIP =null;
 	
-	public FileListSenderThread(int port, boolean isLeader)
-	{
+ 	public FileListSenderThread(int port, boolean isLeader, String newIp)
+
+ 	{
 		this.port = port;
-		this.isLeader = isLeader;
-	}
-	
+ 		this.isLeader = isLeader;
+		newMemberIP=newIp;
+ 	}
+
 	public void run() 
 	{
 
@@ -45,6 +48,22 @@ public class FileListSenderThread extends Thread
 			if(isLeader)
 			{
 				ip2bSent = getTwoSuccessorIps(Node.getLeadId());
+				
+				// TODO: need to re-write this code later, just no time now
+
+				if(newMemberIP !=null)			 
+				{			 
+					Set<String> new2ip = new HashSet<String>();			 	
+					for(String i : ip2bSent)			 
+					{			 
+						new2ip.add(i);
+						break;		 	
+					}			 	
+					new2ip.add(newMemberIP);			 	
+					ip2bSent=new2ip;			 	
+				}
+
+
 			}
 			// if not, send to any random 2 server beside itself and the leader
 			else

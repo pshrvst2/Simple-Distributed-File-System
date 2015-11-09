@@ -92,7 +92,7 @@ public class FileListListenerThread extends Thread{
 						}
 						
 						// this will only happen when the machine is not the leader, the leader only update its filelist after the file operation is done.
-						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,false);
+						Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,false,null);
 						fileListThread.run();
 					}
 					objInpStream.close();

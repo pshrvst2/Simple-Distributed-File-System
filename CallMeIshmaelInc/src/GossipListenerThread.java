@@ -137,7 +137,7 @@ public class GossipListenerThread extends Thread
 					{
 						if(Node.getLeadId().equals(Node._machineId))
 						{
-							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true);
+							Thread fileListThread = new FileListSenderThread(Node._gossipFileListPort,true, id.substring(0,id.indexOf(":")));
 							fileListThread.run();
 						}
 					}

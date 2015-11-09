@@ -93,12 +93,12 @@ public class ElectionSenderThread extends Thread
 				catch (SocketException e) 
 				{
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				catch(IOException ioExcep)
 				{
 					_logger.error(ioExcep);
-					ioExcep.printStackTrace();
+					//ioExcep.printStackTrace();
 				}
 			}
 			Node._gossipMap.get(Node._machineId).increaseElectionCounts();
