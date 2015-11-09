@@ -135,7 +135,7 @@ public class ReqListenerInstance extends Thread
 						String senderIp = keyWords[1];
 						Socket newSocket = new Socket(senderIp, Node._TCPPortForRequests);
 						PrintWriter pw1 = new PrintWriter(newSocket.getOutputStream(), true);
-						pw.println("trans:"+senderIp+":"+receiver+":"+file);
+						pw1.println("trans:"+senderIp+":"+receiver+":"+file);
 						System.out.println("Sending commadn to sender: ");
 						System.out.println("trans:"+senderIp+":"+receiver+":"+file);
 						log.info("Message flushed to Sender");
