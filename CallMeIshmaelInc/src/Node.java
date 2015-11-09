@@ -78,11 +78,11 @@ public class Node
 	// detect whether we have the leader, if not, may wanna keep above hash map, else, clean up the has map cause job has been done by leader
 	public static boolean _hasLeader = false;
 
-	//final static String localFilePath = "/home/pshrvst2/local/";
-	//final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
+	final static String localFilePath = "/home/pshrvst2/local/";
+	final static String sdfsFilePath = "/home/pshrvst2/sdfs/";
 	
-	final static String localFilePath = "/home/xchen135/local/";
-	final static String sdfsFilePath = "/home/xchen135/sdfs/";
+	//final static String localFilePath = "/home/xchen135/local/";
+	//final static String sdfsFilePath = "/home/xchen135/sdfs/";
 	/**
 	 * @param args To ensure : Server init has to be command line.
 	 */

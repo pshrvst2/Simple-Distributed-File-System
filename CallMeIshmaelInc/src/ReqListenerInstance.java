@@ -246,7 +246,7 @@ public class ReqListenerInstance extends Thread
 						if(senderIp != null)
 						{
 							// Awesome! We found a server which has the file. Now instruct that server to put to the file to the client.
-							String receiverIp = clientSocket.getInetAddress().toString();
+							String receiverIp = clientSocket.getInetAddress().toString().substring(1, clientSocket.getInetAddress().toString().length());
 							String comnd = "trans"+":"+senderIp+":"+receiverIp;
 							Thread fileOprReqInstance = new ReqSender(comnd, words[1], Node.getLeadIp(), Node._TCPPortForRequests);
 							fileOprReqInstance.start();
