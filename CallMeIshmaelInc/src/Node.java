@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -103,6 +104,9 @@ public class Node
 			}
 			
 			_machineIp = InetAddress.getLocalHost().getHostAddress().toString();
+			
+			// no matter what, just delete your SDFS when you join.
+			deleteSDFS();
 			
 			boolean flag = true;
 			while(flag)
@@ -378,6 +382,22 @@ public class Node
 			_logger.info("Good Bye!");
 		}
 
+	}
+	
+	public static boolean deleteSDFS() 
+	{
+		try
+		{
+			String command = "rm -rf "+sdfsFilePath+"*";
+			Runtime rt = Runtime.getRuntime();
+			rt.exec(new String[] { "bash", "-c", command });
+		}
+		catch (IOException e) 
+		{
+			_logger.info("No such file");
+			_logger.error(e);
+		}
+		return true;
 	}
 
 	public static boolean initLogging() 
