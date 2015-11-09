@@ -131,7 +131,8 @@ public class ReqListenerInstance extends Thread
 					else
 					{
 						// communicate with the sender and ask him to send the file to the receiver
-						 String senderIp = keyWords[1];
+						file = keyWords[4];
+						String senderIp = keyWords[1];
 						Socket newSocket = new Socket(senderIp, Node._TCPPortForRequests);
 						PrintWriter pw1 = new PrintWriter(newSocket.getOutputStream(), true);
 						pw.println("trans:"+senderIp+":"+receiver+":"+file);
