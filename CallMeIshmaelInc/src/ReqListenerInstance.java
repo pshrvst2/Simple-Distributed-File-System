@@ -145,22 +145,23 @@ public class ReqListenerInstance extends Thread
 				String entireCommand = clientCommand;
 				String basicPart[] = entireCommand.split("-");
 				String commandPart[] = basicPart[0].split(":");
-				String temp = basicPart[1].substring(0, basicPart[1].length()-1);
-				String ipPart[] = temp.split(":");
 				
-				Set<String> ipSet = new HashSet<String>();;
-				for(String ip : ipPart)
-				{
-					ipSet.add(ip);
-				}
 				
 				if(commandPart[1].equalsIgnoreCase("put"))
 				{
+					String temp = basicPart[1].substring(0, basicPart[1].length()-1);
+					String ipPart[] = temp.split(":");
+					
+					Set<String> ipSet = new HashSet<String>();;
+					for(String ip : ipPart)
+					{
+						ipSet.add(ip);
+					}
 					updateFileList(ipSet, commandPart[2], "put");
 				}
 				else if(commandPart[1].equalsIgnoreCase("delete"))
 				{
-					
+					updateFileList(null, commandPart[2], "delete");
 				}
 			}
 			else
@@ -285,8 +286,8 @@ public class ReqListenerInstance extends Thread
 						pw.println(ip.get(1));
 						pw.println(ip.get(2));
 					}
-					pw.close();
-					if(isLeaderInTheList)
+					//pw.close();
+					/*if(isLeaderInTheList)
 					{
 						Runtime rt = Runtime.getRuntime();
 						String deleteCmd = "rm -rf "+Node.sdfsFilePath+words[1];
@@ -324,7 +325,7 @@ public class ReqListenerInstance extends Thread
 								break;
 							}
 						}
-					}
+					}*/
 				}
 			}
 

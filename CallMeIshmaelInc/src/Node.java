@@ -290,7 +290,26 @@ public class Node
 				}
 				else if(userCmd.startsWith("delete"))
 				{
-					
+					String command[] = userCmd.split("\\s");
+					if(command.length != 2)
+					{
+						System.out.println("Enter the command correctly.");
+						_logger.info("Invalid command. Enter the command correctly.");
+					}
+					else
+					{
+						String serverip = null;
+						serverip = getLeadIp();
+						if(serverip != null)
+						{	
+							Thread reqInstance = new ReqSender(command[0], command[1], serverip, _TCPPortForRequests);
+							reqInstance.start();
+						}
+						else
+						{
+							System.out.println("There is no Leader. File operations cannot be done now");
+						}
+					}
 				}
 				else if(userCmd.startsWith("store"))
 				{

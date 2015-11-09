@@ -236,8 +236,8 @@ public class ReqSender extends Thread
 				{	
 					for(String ip : listOfIp)
 					{
-						if(!ip.equalsIgnoreCase(serverIp))
-						{
+						//if(!ip.equalsIgnoreCase(serverIp))
+						//{
 							Socket fileDeleteSocket = new Socket(ip, serverPort);
 							PrintWriter filePw = new PrintWriter(fileDeleteSocket.getOutputStream(), true);
 							filePw.println("begin:"+userCommand+":"+fullFilePath);
@@ -254,8 +254,8 @@ public class ReqSender extends Thread
 							bufReader.close();
 							filePw.close();
 							fileDeleteSocket.close();
-						}
-						else
+					//	}
+						/*else
 						{
 							// Leader's sdfs file to be deleted.
 							//pw.println("begin:"+userCommand+":"+fullFilePath);
@@ -267,7 +267,7 @@ public class ReqSender extends Thread
 							}
 							if(ack.equals("OK"))
 								operationCount++;
-						}
+						}*/
 					}
 				}
 				else
@@ -277,7 +277,13 @@ public class ReqSender extends Thread
 				
 				// send the final ack to leader that operation is done
 				//if(operationCount == 3)
-					pw.println("end:"+userCommand+":"+fullFilePath);
+				pw.println("end:"+userCommand+":"+fileName);
+				Socket fileDeleteListUpdateSocket = new Socket(Node.getLeadIp(), serverPort);
+				PrintWriter filePw = new PrintWriter(fileDeleteListUpdateSocket.getOutputStream(), true);
+				filePw.println("end:"+userCommand+":"+fullFilePath);
+
+				filePw.close();
+				fileDeleteListUpdateSocket.close();
 				
 				pw.close();
 				serverReader.close();
