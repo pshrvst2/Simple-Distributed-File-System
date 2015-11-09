@@ -34,6 +34,8 @@ public class FileReceiverInstance extends Thread
 			String fileNameWithType = dataIpStream.readUTF();
 			String keyWord[] = fileNameWithType.split(":");
 			String absoluteFilePath = null;
+			byte[] buffer = new byte[16*1024];
+			int bytesRead;
 			
 			// TODO *************************
 		    if(keyWord[1].equals("get"))
@@ -45,16 +47,21 @@ public class FileReceiverInstance extends Thread
             long fileSize = dataIpStream.readLong();
            
             File downloadedFile = new File(absoluteFilePath);
-            DataOutputStream dos = new DataOutputStream(new FileOutputStream(downloadedFile)); 
-            for(int i =0;i<fileSize;i++)
+            FileOutputStream fos = new FileOutputStream(downloadedFile); 
+            /*for(int i =0;i<fileSize;i++)
             {          
             	int index;
             	while((index=dataIpStream.read())!=-1)
             	{
             		dos.write(index);
             	}
+            }*/
+            
+            while (fileSize > 0 && (bytesRead = dataIpStream.read(buffer, 0, (int) Math.min(buffer.length, fileSize))) != -1) {
+            	fos.write(buffer, 0, bytesRead);
+            	fileSize -= bytesRead;
             }
-            dos.close();
+            fos.close();
             dataIpStream.close();
             clientSocket.close();
             log.info("File received. Socket connection instance closed");

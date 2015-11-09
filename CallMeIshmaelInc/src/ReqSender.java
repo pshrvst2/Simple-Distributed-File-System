@@ -303,7 +303,7 @@ public class ReqSender extends Thread
 		{
 			// put file
 			String fullFilePath = Node.localFilePath+fileName;
-			BufferedReader bufRead = null;
+			//BufferedReader bufRead = null;
 			try 
 			{
 				// logic to ping the master and get the list of ip's
@@ -311,17 +311,28 @@ public class ReqSender extends Thread
 				//Data.O/p.Stream
 				File file = new File(fullFilePath);
 				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+				FileInputStream fis = new FileInputStream(file);
+				
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				byte[] mybytearray = new byte[(int) file.length()];
+				DataInputStream dis = new DataInputStream(bis);
+				dis.readFully(mybytearray, 0, mybytearray.length);
 				dos.writeUTF(fileName+":put");
 				long fileSize = file.length();
 				dos.writeLong(fileSize);
-				bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+				
+				dos.write(mybytearray, 0, mybytearray.length);
+				dos.flush();
+				
+				/*bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 				int index;
                 while((index=bufRead.read())!=-1)
                 {
                     dos.write(index);
-                }
+                }*/
                 log.info("File transfered");
-                bufRead.close();
+                //bufRead.close();
+                dis.close();
                 dos.close();
 				socket.close();
 

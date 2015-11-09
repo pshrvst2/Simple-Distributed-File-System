@@ -1,4 +1,6 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -461,28 +463,37 @@ public class ReqListenerInstance extends Thread
 	{
 		// put file
 		String fullFilePath = Node.sdfsFilePath+fileName;
-		BufferedReader bufRead = null;
+		//BufferedReader bufRead = null;
 		try 
 		{
 			// logic to ping the master and get the list of ip's
 			Socket socket = new Socket(receiverIp, Node._TCPPortForFileTransfers);
 			//Data.O/p.Stream
 			File file = new File(fullFilePath);
+			FileInputStream fis = new FileInputStream(file);
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			byte[] mybytearray = new byte[(int) file.length()];
+			DataInputStream dis = new DataInputStream(bis);
+			dis.readFully(mybytearray, 0, mybytearray.length);
 			
 			fileName = fileName+":"+putFlag;
 			
 			dos.writeUTF(fileName);
 			long fileSize = file.length();
 			dos.writeLong(fileSize);
-			bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			dos.write(mybytearray, 0, mybytearray.length);
+			dos.flush();
+			
+			/*bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			int index;
 			while((index=bufRead.read())!=-1)
 			{
 				dos.write(index);
-			}
+			}*/
 			log.info("File transfered");
-			bufRead.close();
+			//bufRead.close();
+			dis.close();
 			dos.close();
 			socket.close();
 
