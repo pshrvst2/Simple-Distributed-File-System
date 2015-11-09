@@ -80,19 +80,19 @@ public class GossipListenerThread extends Thread
 				catch (IOException e) 
 				{
 					_logger.error(e);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				catch (ClassNotFoundException e) 
 				{
 					_logger.error(e);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}                
 			}
 		}
 		catch (SocketException e1)
 		{
 			_logger.error(e1);
-			e1.printStackTrace();
+			//e1.printStackTrace();
 		}
 	}
 

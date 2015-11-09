@@ -40,7 +40,7 @@ public class OkMessageThread extends Thread
 		}
 		catch(IOException e)
 		{
-			e.getMessage();
+			//e.getMessage();
 		}
 	}
 	

@@ -106,12 +106,12 @@ public class FileListListenerThread extends Thread{
 				catch (IOException e) 
 				{
 					_logger.error(e);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}		
 				catch (ClassNotFoundException e) 
 				{
 					_logger.error(e);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}                
 			}
 		}

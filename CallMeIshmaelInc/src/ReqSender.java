@@ -167,7 +167,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			
 		}	
@@ -205,7 +205,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}	
 		}
 		else if(userCommand.equalsIgnoreCase("delete"))
@@ -295,7 +295,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			
 		}
@@ -330,7 +330,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		
@@ -355,7 +355,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		else if(userCommand.startsWith("end:delete"))
@@ -379,7 +379,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		else if(userCommand.startsWith(("trans")))
@@ -430,7 +430,7 @@ public class ReqSender extends Thread
 			{
 				// TODO Auto-generated catch block
 				log.error(e);
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}

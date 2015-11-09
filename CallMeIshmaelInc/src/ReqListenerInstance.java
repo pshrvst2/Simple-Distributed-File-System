@@ -354,7 +354,7 @@ public class ReqListenerInstance extends Thread
 		} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -491,7 +491,7 @@ public class ReqListenerInstance extends Thread
 		{
 			// TODO Auto-generated catch block
 			log.error(e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

@@ -50,7 +50,7 @@ public class ReqListener extends Thread
 		catch (IOException e) 
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		finally
 		{
@@ -58,7 +58,7 @@ public class ReqListener extends Thread
 				serverSocketListener.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}
