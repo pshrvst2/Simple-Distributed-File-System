@@ -304,7 +304,7 @@ public class ReqSender extends Thread
 				//Data.O/p.Stream
 				File file = new File(fullFilePath);
 				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-				dos.writeUTF(fileName);
+				dos.writeUTF(fileName+":put");
 				long fileSize = file.length();
 				dos.writeLong(fileSize);
 				bufRead = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
